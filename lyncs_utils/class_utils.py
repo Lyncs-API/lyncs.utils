@@ -71,7 +71,7 @@ def add_parameters_to_doc(doc, doc_params):
     """
     if not doc:
         return doc
-    
+
     doc = doc.split("\n")
     found = False
     for i, line in enumerate(doc):
@@ -91,7 +91,7 @@ def get_parameters_doc(doc):
     """
     if not doc:
         return doc
-    
+
     found = False
     parameters = []
     for line in doc.split("\n"):

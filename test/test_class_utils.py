@@ -26,7 +26,7 @@ class Foo:
     @add_kwargs_of(__init__)
     def decorated(self, **kwargs):
         pass
-    
+
     def __dir__(self):
         return object.__dir__(self) + [
             "not_attr",
