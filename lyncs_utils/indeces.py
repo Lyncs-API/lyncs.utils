@@ -19,8 +19,10 @@ def compact_indeces(indeces):
     >>> list(compact_indeces([1, 2, 4, 6, 7, 8, 10, 12, 13]))
     [1, range(2, 7, 2), 7, range(8, 13, 2), 13]
     """
+
     if not isiterable(indeces, int):
-        raise ValueError("Compact_indeces requires a list of integers")
+        raise TypeError("compact_indeces requires a list of integers")
+
     tmp = []
     step = 0
     for idx in indeces:
