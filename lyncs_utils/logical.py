@@ -2,6 +2,11 @@
 Functions returning or manipulating logical values (boolean)
 """
 
+__all__ = [
+    "single_true",
+    "isiterable",
+]
+
 from collections.abc import Iterable
 
 

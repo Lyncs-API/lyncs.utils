@@ -6,7 +6,7 @@ __all__ = [
     "compact_indeces",
 ]
 
-from .class_utils import isiterable
+from .logical import isiterable
 
 
 def compact_indeces(indeces):

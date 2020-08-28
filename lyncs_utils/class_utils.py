@@ -9,8 +9,6 @@ __all__ = [
     "add_parameters_to_doc",
     "add_kwargs_of",
     "compute_property",
-    "single_true",
-    "isiterable",
 ]
 
 from collections.abc import Iterable
