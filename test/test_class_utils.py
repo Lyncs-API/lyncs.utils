@@ -1,5 +1,5 @@
 from IPython.lib.pretty import pretty
-from lyncs_utils import compute_property, default_repr_pretty
+from lyncs_utils import compute_property, default_repr_pretty, add_kwargs_of
 from random import random
 
 
@@ -21,6 +21,10 @@ class Foo:
     random_list.key = "_random_list"
 
     def method(self):
+        pass
+
+    @add_kwargs_of(__init__)
+    def decorated(self, **kwargs):
         pass
 
     def __dir__(self):

@@ -69,6 +69,9 @@ def add_parameters_to_doc(doc, doc_params):
     """
     Inserts doc_params in the first empty line after Parameters if possible.
     """
+    if not doc:
+        return doc
+
     doc = doc.split("\n")
     found = False
     for i, line in enumerate(doc):
@@ -86,6 +89,9 @@ def get_parameters_doc(doc):
     """
     Extracts the documentation of the parameters
     """
+    if not doc:
+        return doc
+
     found = False
     parameters = []
     for line in doc.split("\n"):
