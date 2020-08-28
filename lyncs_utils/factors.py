@@ -10,6 +10,7 @@ __all__ = [
 
 from functools import reduce
 
+
 def prod(arr):
     "Returns the product of the elements"
     return reduce((lambda x, y: x * y), arr, 1)
@@ -28,12 +29,13 @@ def prime_factors(num):
     "Returns the list of prime factors of n"
     itr = iter(PRIMES)
     cur = next(itr)
-    while num > 1 and cur < int(num ** 0.5) + 1:
+    stop = int(num ** 0.5) + 1
+    while num > 1 and cur < stop:
         while num % cur == 0:
             yield cur
             num //= cur
 
-        # Looping first over the given prime numbers
+        # Looping first over the known prime numbers
         try:
             cur = next(itr)
         # then proceeding only with the odd numbers
