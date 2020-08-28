@@ -1,11 +1,18 @@
 """
-A list of factorization utils
+A collection of factorization utils
 """
 
 __all__ = [
+    "prod",
     "factors",
     "prime_factors",
 ]
+
+from functools import reduce
+
+def prod(arr):
+    "Returns the product of the elements"
+    return reduce((lambda x, y: x * y), arr, 1)
 
 
 def factors(num):

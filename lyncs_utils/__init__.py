@@ -4,7 +4,6 @@ __version__ = "0.0.1"
 
 from .factors import *
 from .logical import *
-from .reduce import *
 from .class_utils import *
 from .extensions import *
 from .indeces import *
