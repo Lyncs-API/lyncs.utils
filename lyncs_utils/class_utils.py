@@ -1,61 +1,68 @@
 """
 Some recurring utils used all along the package
 """
-# pylint: disable=C0303,C0330
 
 __all__ = [
-    "to_list",
-    "default_repr",
+    "default_repr_pretty",
     "add_parameters_to_doc",
     "add_kwargs_of",
     "compute_property",
 ]
 
-from collections.abc import Iterable
 from types import MethodType
 from copy import copy
 from inspect import signature, _empty
 
 
-def default_repr(self, short=True):
+def default_repr_pretty(self, printer, cycle=False):
     """
-    Default repr used by lyncs
+    Default _repr_pretty_ for lyncs classes
     """
 
-    ret = (self.type if hasattr(self, "type") else type(self).__name__) + "("
-    pad = " " * (len(ret))
+    name = (self.type if hasattr(self, "type") else type(self).__name__) + "("
+    printer.begin_group(len(name), name)
+
     found_first = False
-    for key, val in signature(self.__init__).parameters.items():
-        if key in dir(self) and val.kind in [
-            val.POSITIONAL_ONLY,
-            val.POSITIONAL_OR_KEYWORD,
-            val.KEYWORD_ONLY,
-        ]:
-            if val.kind == val.POSITIONAL_ONLY:
-                arg_eq = ""
-            elif val.kind == val.POSITIONAL_OR_KEYWORD and val.default == _empty:
-                arg_eq = ""
-            else:
-                arg_eq = key + " = "
-
-            val = getattr(self, key)
+    for key, arg in signature(self.__init__).parameters.items():
+        if arg.kind in (
+            arg.POSITIONAL_ONLY,
+            arg.POSITIONAL_OR_KEYWORD,
+            arg.KEYWORD_ONLY,
+        ):
+            try:
+                val = getattr(self, key)
+            except AttributeError:
+                continue
             if isinstance(val, MethodType):
                 continue
+            if arg.default == val:
+                continue
 
-            val = repr(val)
-
-            if short and "\n" in val:
-                val = val.split("\n")[0] + " ... " + val[-1]
-            else:
-                val = val.replace("\n", "\n" + pad + " " * (len(arg_eq)))
-
-            if found_first:
-                ret += ",\n" + pad
+            if cycle and found_first:
+                printer.text(", ...")
+                break
+            elif found_first:
+                printer.text(",")
+                printer.breakable(" ")
             else:
                 found_first = True
-            ret += arg_eq + val
-    ret += ")"
-    return ret
+
+            indent = 0
+            if (
+                arg.kind in [arg.POSITIONAL_OR_KEYWORD, arg.KEYWORD_ONLY]
+                and arg.default != _empty
+            ):
+                indent = len(key) + 1
+                printer.text(key + "=")
+
+            if hasattr(val, "_repr_pretty_"):
+                printer.begin_group(indent)
+                val._repr_pretty_(printer, cycle=True)
+                printer.end_group(indent)
+            else:
+                printer.text(repr(val))
+
+    printer.end_group(len(name), ")")
 
 
 def add_parameters_to_doc(doc, doc_params):
@@ -143,20 +150,6 @@ def add_kwargs_of(fnc):
     return decorator
 
 
-def to_list(*args):
-    from ..tunable import computable, Delayed
-
-    @computable
-    def to_list(*args):
-        return list(args)
-
-    lst = to_list(*args)
-    if isinstance(lst, Delayed):
-        lst._length = len(args)
-
-    return lst
-
-
 class compute_property(property):
     """
     Computes a property once and store the result in key
@@ -164,6 +157,7 @@ class compute_property(property):
 
     @property
     def key(self):
+        "The key of the attribute where to store the result"
         return getattr(self, "_key", "_" + self.fget.__name__)
 
     @key.setter
