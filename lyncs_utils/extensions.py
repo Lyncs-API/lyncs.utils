@@ -2,22 +2,28 @@
 Extensions of Python standard functions
 """
 
-__all__ = ["count", "FrozenDict"]
+__all__ = [
+    "count",
+    "FreezableDict",
+]
 
 from functools import wraps
 from itertools import count as _count
 
 
 class count(_count):
-    "Extension of itertools.count. Add __call__ method"
+    "Extension of itertools.count. Adds __call__ method"
 
     def __call__(self, num):
         for _ in range(num):
             yield next(self)
 
 
-class FrozenDict(dict):
-    "Frozable dictionary"
+class FreezableDict(dict):
+    """
+    Freezable dictionary, a dictionary that can be frozen at any moment with
+    the option of either or both not allowing changes or not allowing new keys.
+    """
 
     def __new__(cls, *args, **kwargs):
         self = super().__new__(cls, *args, **kwargs)
@@ -60,7 +66,7 @@ class FrozenDict(dict):
     @property
     def allows_changes(self):
         "Returns if the current instance allows changes to the values"
-        return self._allows_new
+        return self._allows_changes
 
     @allows_changes.setter
     def allows_changes(self, value):
@@ -70,7 +76,7 @@ class FrozenDict(dict):
                     "Allows_changes can only be changed to False. To unfreeze do a copy."
                 )
             for key, val in self.items():
-                if isinstance(val, FrozenDict):
+                if isinstance(val, FreezableDict):
                     self[key] = val.freeze()
             self._allows_changes = value
 
@@ -98,7 +104,7 @@ class FrozenDict(dict):
                 )
         elif not self.allows_new:
             raise RuntimeError("The dict has been frozen and %s cannot be added." % key)
-        if not self.allows_changes and isinstance(val, FrozenDict):
+        if not self.allows_changes and isinstance(val, FreezableDict):
             val = val.freeze()
         super().__setitem__(key, val)
 
@@ -119,8 +125,8 @@ class FrozenDict(dict):
             self[key] = val
 
     @wraps(dict.pop)
-    def pop(self, key, val):
-        if key not in self:
+    def pop(self, key, val=None):
+        if val is not None and key not in self:
             return val
         val = self[key]
         del self[key]
