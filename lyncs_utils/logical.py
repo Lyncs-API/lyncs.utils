@@ -5,9 +5,11 @@ Functions returning or manipulating logical values (boolean)
 __all__ = [
     "single_true",
     "isiterable",
+    "interactive",
 ]
 
 from collections.abc import Iterable
+import __main__
 
 
 def isiterable(obj, types=None):
@@ -31,3 +33,8 @@ def single_true(iterable):
     """ Returns if one and only one element of the argument is True """
     i = iter(iterable)
     return any(i) and not any(i)
+
+def interactive():
+    "Returns if Python has been run in interactive mode"
+    # https://stackoverflow.com/questions/2356399/tell-if-python-is-in-interactive-mode
+    return not hasattr(__main__, '__file__')
