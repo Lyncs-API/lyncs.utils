@@ -34,7 +34,8 @@ def single_true(iterable):
     i = iter(iterable)
     return any(i) and not any(i)
 
+
 def interactive():
     "Returns if Python has been run in interactive mode"
     # https://stackoverflow.com/questions/2356399/tell-if-python-is-in-interactive-mode
-    return not hasattr(__main__, '__file__')
+    return not hasattr(__main__, "__file__")

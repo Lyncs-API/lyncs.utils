@@ -20,5 +20,6 @@ def test_single_true():
         ]
     )
 
+
 def test_interactive():
     assert not interactive()
