@@ -1,4 +1,4 @@
-from lyncs_utils import isiterable, single_true
+from lyncs_utils import isiterable, single_true, interactive
 
 
 def test_isiterable():
@@ -19,3 +19,7 @@ def test_single_true():
             False,
         ]
     )
+
+
+def test_interactive():
+    assert not interactive()
