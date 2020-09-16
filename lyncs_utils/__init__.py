@@ -6,5 +6,5 @@ from .factors import *
 from .logical import *
 from .class_utils import *
 from .extensions import *
-from .indeces import *
+from .indexes import *
 from .functools import *
