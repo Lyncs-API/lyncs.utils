@@ -1,31 +1,31 @@
 """
-Utils for indeces
+Utils for indexes
 """
 
 __all__ = [
-    "compact_indeces",
+    "compact_indexes",
 ]
 
 from .logical import isiterable
 
 
-def compact_indeces(indeces):
+def compact_indexes(indexes):
     """
     Returns a list of ranges or integers
     as they occur sequentially in the list
 
     Examples
     --------
-    >>> list(compact_indeces([1, 2, 4, 6, 7, 8, 10, 12, 13]))
+    >>> list(compact_indexes([1, 2, 4, 6, 7, 8, 10, 12, 13]))
     [1, range(2, 7, 2), 7, range(8, 13, 2), 13]
     """
 
-    if not isiterable(indeces, int):
-        raise TypeError("compact_indeces requires a list of integers")
+    if not isiterable(indexes, int):
+        raise TypeError("compact_indexes requires a list of integers")
 
     tmp = []
     step = 0
-    for idx in indeces:
+    for idx in indexes:
         if len(tmp) < 2:
             tmp.append(idx)
         else:
