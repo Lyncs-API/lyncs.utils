@@ -1,14 +1,22 @@
 """
 Extensions of Python standard functions
 """
+# pylint: disable=invalid-name
 
 __all__ = [
     "count",
+    "redirect_stdout",
     "FreezableDict",
 ]
 
+import io
+import os
+import sys
+import ctypes
+import tempfile
 from functools import wraps
 from itertools import count as _count
+from contextlib import redirect_stdout as _redirect_stdout
 
 
 class count(_count):
@@ -17,6 +25,57 @@ class count(_count):
     def __call__(self, num):
         for _ in range(num):
             yield next(self)
+
+
+class redirect_stdout(_redirect_stdout):
+    """
+    Context manager for temporarily redirecting stdout to another file.
+    Additionally to contextlib.redirect_stdout, it redirects stdout also from C.
+
+    >>> with redirect_stdout(sys.stderr):
+    ...    print('this is from python')
+    ...    os.system('echo this is from echo')
+    """
+
+    def __init__(self, new_target):
+        super().__init__(new_target)
+        self._tmp = None
+
+    @staticmethod
+    def cfflush():
+        "Flushes the C stdout"
+        libc = ctypes.CDLL(None)
+        c_stdout = ctypes.c_void_p.in_dll(libc, "stdout")
+        libc.fflush(c_stdout)
+
+    def __enter__(self):
+        new_target = super().__enter__()
+        try:
+            fno = new_target.fileno()
+        except io.UnsupportedOperation:
+            self._tmp = tempfile.TemporaryFile(mode="w+")
+            fno = self._tmp.fileno()
+            sys.stdout = self._tmp
+
+        self.cfflush()
+        self._old_targets.append(os.dup(1))
+        os.dup2(fno, 1)
+
+        return sys.stdout
+
+    def __exit__(self, exctype, excinst, exctb):
+        self.cfflush()
+
+        if self._tmp:
+            self._tmp.flush()
+            self._tmp.seek(0, io.SEEK_SET)
+            self._new_target.write(self._tmp.read())
+            self._tmp.close()
+
+        fno = self._old_targets.pop()
+        os.dup2(fno, 1)
+        os.close(fno)
+        super().__exit__(exctype, excinst, exctb)
 
 
 class FreezableDict(dict):
