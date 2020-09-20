@@ -1,3 +1,8 @@
+import ctypes
+import os
+import io
+import tempfile
+from lyncs_utils import redirect_stdout
 from pytest import raises
 from itertools import count as _count
 from lyncs_utils import count, FreezableDict
@@ -8,6 +13,38 @@ def test_count():
     counter = count()
     assert list(counter(5)) == list(range(5))
     assert list(counter(5)) == list(range(5, 10))
+
+
+def test_redirect_stdout():
+    libc = ctypes.CDLL(None)
+
+    fp = io.StringIO()
+
+    with redirect_stdout(fp):
+        print("this is from python")
+        libc.puts(b"this is from C\n")
+        os.system("echo this is from echo")
+
+    output = fp.getvalue().split("\n")
+
+    assert "this is from python" in output
+    assert "this is from C" in output
+    assert "this is from echo" in output
+
+    fp = tempfile.TemporaryFile(mode="w+")
+
+    with redirect_stdout(fp):
+        print("this is from python")
+        libc.puts(b"this is from C\n")
+        os.system("echo this is from echo")
+
+    fp.flush()
+    fp.seek(0, io.SEEK_SET)
+    output = fp.read().split("\n")
+
+    assert "this is from python" in output
+    assert "this is from C" in output
+    assert "this is from echo" in output
 
 
 def test_freezable_dict():
