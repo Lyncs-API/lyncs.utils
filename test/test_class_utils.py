@@ -42,6 +42,8 @@ def test_repr_pretty():
 
 
 def test_compute_property():
+    assert isinstance(Foo.random, property)
+    
     foo = Foo(10)
     assert foo.random == foo.random
     assert foo.random == foo._random
