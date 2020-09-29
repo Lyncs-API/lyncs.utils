@@ -35,13 +35,17 @@ def default_repr_pretty(self, printer, cycle=False):
                 continue
             if isinstance(val, MethodType):
                 continue
-            if arg.default == val:
-                continue
+            try:
+                if arg.default == val:
+                    continue
+            except:
+                pass
 
             if cycle and found_first:
                 printer.text(", ...")
                 break
-            elif found_first:
+
+            if found_first:
                 printer.text(",")
                 printer.breakable(" ")
             else:
@@ -171,6 +175,8 @@ class compute_property(property):
         self._key = value
 
     def __get__(self, obj, owner):
+        if obj is None:
+            return self
         try:
             return copy(getattr(obj, self.key))
         except AttributeError:
