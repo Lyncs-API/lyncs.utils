@@ -44,7 +44,7 @@ def default_repr_pretty(self, printer, cycle=False):
             if cycle and found_first:
                 printer.text(", ...")
                 break
-            
+
             if found_first:
                 printer.text(",")
                 printer.breakable(" ")
