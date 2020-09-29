@@ -46,7 +46,7 @@ jobs:
           python setup.py sdist
           twine upload dist/*
           # waiting for pip to update the index
-          sleep 30
+          sleep 60
         )
 
   clean-run:
