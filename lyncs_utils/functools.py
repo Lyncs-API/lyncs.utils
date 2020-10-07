@@ -8,6 +8,8 @@ __all__ = [
     "select_kwargs",
 ]
 
+from functools import partial
+
 
 def get_varnames(func):
     "Returns the list of varnames of the function"
@@ -18,15 +20,31 @@ def get_varnames(func):
         return ()
 
 
+def get_func(obj):
+    "Finds the actual function of a callable object"
+
+    if not callable(obj) or hasattr(obj, "__code__"):
+        return obj
+
+    # Class
+    if isinstance(obj, type):
+        new = getattr(obj, "__new__", None)
+        if new != object.__new__:
+            return new
+        return getattr(obj, "__init__", new)
+
+    # partial
+    if isinstance(obj, partial):
+        return get_func(obj.func)
+
+    # instance or nothine
+    return getattr(obj, "__call__", obj)
+
+
 def has_args(func):
     "Whether the function has *args."
 
-    if isinstance(func, type):
-        new = getattr(func, "__new__", None)
-        if new != object.__new__:
-            return has_args(new)
-        return has_args(getattr(func, "__init__", new))
-
+    func = get_func(func)
     try:
         return bool(func.__code__.co_flags & 0x04)
     except AttributeError as err:
@@ -38,12 +56,7 @@ def has_args(func):
 def has_kwargs(func):
     "Whether the function has **kwargs."
 
-    if isinstance(func, type):
-        new = getattr(func, "__new__", None)
-        if new != object.__new__:
-            return has_kwargs(new)
-        return has_kwargs(getattr(func, "__init__", new))
-
+    func = get_func(func)
     try:
         return bool(func.__code__.co_flags & 0x08)
     except AttributeError as err:

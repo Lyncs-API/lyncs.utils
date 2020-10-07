@@ -1,4 +1,5 @@
 from pytest import raises
+from functools import partial
 from lyncs_utils.functools import *
 
 
@@ -29,6 +30,9 @@ def test_has_args():
         def __init__(self, *args, **kwargs):
             pass
 
+        def __call__(self, *args, **kwargs):
+            pass
+
     class f7:
         pass
 
@@ -39,6 +43,10 @@ def test_has_args():
         def __init__(self):
             pass
 
+    f9 = partial(f8, a=1)
+    f10 = partial(f1, a=1)
+    f11 = f6()
+
     assert not has_args(f1)
     assert has_args(f2)
     assert not has_args(f3)
@@ -47,6 +55,9 @@ def test_has_args():
     assert has_args(f6)
     assert not has_args(f7)
     assert has_args(f8)
+    assert has_args(f9)
+    assert not has_args(f10)
+    assert has_args(f11)
 
     with raises(TypeError):
         has_args(1)
@@ -71,6 +82,9 @@ def test_has_kwargs():
         def __init__(self, *args, **kwargs):
             pass
 
+        def __call__(self, *args, **kwargs):
+            pass
+
     class f7:
         pass
 
@@ -81,6 +95,10 @@ def test_has_kwargs():
         def __init__(self):
             pass
 
+    f9 = partial(f8, a=1)
+    f10 = partial(f1, a=1)
+    f11 = f6()
+
     assert not has_kwargs(f1)
     assert not has_kwargs(f2)
     assert has_kwargs(f3)
@@ -89,6 +107,9 @@ def test_has_kwargs():
     assert has_kwargs(f6)
     assert not has_kwargs(f7)
     assert has_kwargs(f8)
+    assert has_kwargs(f9)
+    assert not has_kwargs(f10)
+    assert has_kwargs(f11)
 
     with raises(TypeError):
         has_kwargs(1)
