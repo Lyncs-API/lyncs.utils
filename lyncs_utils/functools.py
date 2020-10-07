@@ -2,7 +2,10 @@
 
 __all__ = [
     "get_varnames",
+    "has_args",
+    "has_kwargs",
     "apply_annotations",
+    "select_kwargs",
 ]
 
 
@@ -15,8 +18,34 @@ def get_varnames(func):
         return ()
 
 
-def apply_annotations(func, *args, **kwargs):
-    "Applies the annotations (callable) of func to *args, **kwargs"
+def has_args(func):
+    "Whether the function has *args."
+
+    try:
+        return bool(func.__code__.co_flags & 0x04)
+    except AttributeError as err:
+        raise TypeError(f"Expected a function. Got {type(func)}") from err
+
+
+def has_kwargs(func):
+    "Whether the function has **kwargs."
+
+    try:
+        return bool(func.__code__.co_flags & 0x08)
+    except AttributeError as err:
+        raise TypeError(f"Expected a function. Got {type(func)}") from err
+
+
+def apply_annotations(func, *args, _caller=(lambda fnc, val: fnc(val)), **kwargs):
+    """Applies the annotations of the func arguments to the respective *args, **kwargs.
+
+    Parameters:
+    -----------
+    _caller: function
+        How to apply the annotation on the argument. By default the annotation is called
+        against the argument: `arg = annotation(arg)`. More precisely _caller is used as
+        `arg = _caller(annotation, arg)`.
+    """
 
     annotations = getattr(func, "__annotations__", {})
     annotations = tuple((key, val) for key, val in annotations.items() if callable(val))
@@ -28,10 +57,24 @@ def apply_annotations(func, *args, **kwargs):
     varnames = get_varnames(func)
     for key, val in annotations:
         if key in kwargs:
-            kwargs[key] = val(kwargs[key])
+            kwargs[key] = _caller(val, kwargs[key])
         elif key in varnames:
             idx = varnames.index(key)
             if idx < len(args):
-                args[idx] = val(args[idx])
+                args[idx] = _caller(val, args[idx])
 
     return tuple(args), kwargs
+
+
+def select_kwargs(func, *args, **kwargs):
+    "The function is called by passing the args and ONLY the compatible kwargs"
+
+    if has_kwargs(func):
+        varnames = get_varnames(func)[: len(args)]
+        kwargs = {key: val for key, val in kwargs.items() if key not in varnames}
+        return func(*args, **kwargs)
+
+    varnames = get_varnames(func)[len(args) :]
+    print(varnames)
+    kwargs = {key: val for key, val in kwargs.items() if key in varnames}
+    return func(*args, **kwargs)
