@@ -1,5 +1,5 @@
 from IPython.lib.pretty import pretty
-from lyncs_utils import compute_property, default_repr_pretty, add_kwargs_of
+from lyncs_utils import compute_property, default_repr_pretty, add_kwargs_of, add_to
 from random import random
 
 
@@ -31,6 +31,14 @@ class Foo:
         return object.__dir__(self) + [
             "not_attr",
         ]
+
+
+def test_add_to():
+    @add_to(Foo)
+    def added(self):
+        pass
+
+    assert hasattr(Foo, "added")
 
 
 def test_repr_pretty():

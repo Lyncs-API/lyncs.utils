@@ -80,7 +80,7 @@ jobs:
           twine upload --repository-url https://test.pypi.org/legacy/ dist/*
           count=0
           # waiting for pip to update the index
-          sleep 30
+          sleep 60
         )
 
   clean-run:
