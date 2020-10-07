@@ -23,10 +23,27 @@ def test_has_args():
     def f4(a, b, *args, c=1, d=2, **kwargs):
         pass
 
+    f5 = lambda *args, **kwargs: None
+
+    class f6:
+        def __init__(*args, **kwargs):
+            pass
+
+    class f7:
+        pass
+
+    class f8:
+        def __new__(*args, **kwargs):
+            pass
+
     assert not has_args(f1)
     assert has_args(f2)
     assert not has_args(f3)
     assert has_args(f4)
+    assert has_args(f5)
+    assert has_args(f6)
+    assert not has_args(f7)
+    assert has_args(f8)
 
     with raises(TypeError):
         has_args(1)
@@ -45,10 +62,27 @@ def test_has_kwargs():
     def f4(a, b, *args, c=1, d=2, **kwargs):
         pass
 
+    f5 = lambda *args, **kwargs: None
+
+    class f6:
+        def __init__(*args, **kwargs):
+            pass
+
+    class f7:
+        pass
+
+    class f8:
+        def __new__(*args, **kwargs):
+            pass
+
     assert not has_kwargs(f1)
     assert not has_kwargs(f2)
     assert has_kwargs(f3)
     assert has_kwargs(f4)
+    assert has_kwargs(f5)
+    assert has_kwargs(f6)
+    assert not has_kwargs(f7)
+    assert has_kwargs(f8)
 
     with raises(TypeError):
         has_kwargs(1)

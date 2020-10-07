@@ -21,18 +21,34 @@ def get_varnames(func):
 def has_args(func):
     "Whether the function has *args."
 
+    if isinstance(func, type):
+        init = getattr(func, "__init__", None)
+        if init != object.__init__:
+            return has_args(init)
+        return has_args(func.__new__)
+
     try:
         return bool(func.__code__.co_flags & 0x04)
     except AttributeError as err:
+        if callable(func):
+            return False
         raise TypeError(f"Expected a function. Got {type(func)}") from err
 
 
 def has_kwargs(func):
     "Whether the function has **kwargs."
 
+    if isinstance(func, type):
+        init = getattr(func, "__init__", None)
+        if init != object.__init__:
+            return has_kwargs(init)
+        return has_kwargs(func.__new__)
+
     try:
         return bool(func.__code__.co_flags & 0x08)
     except AttributeError as err:
+        if callable(func):
+            return False
         raise TypeError(f"Expected a function. Got {type(func)}") from err
 
 
@@ -75,6 +91,5 @@ def select_kwargs(func, *args, **kwargs):
         return func(*args, **kwargs)
 
     varnames = get_varnames(func)[len(args) :]
-    print(varnames)
     kwargs = {key: val for key, val in kwargs.items() if key in varnames}
     return func(*args, **kwargs)
