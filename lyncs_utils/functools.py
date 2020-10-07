@@ -22,10 +22,10 @@ def has_args(func):
     "Whether the function has *args."
 
     if isinstance(func, type):
-        init = getattr(func, "__init__", None)
-        if init != object.__init__:
-            return has_args(init)
-        return has_args(func.__new__)
+        new = getattr(func, "__new__", None)
+        if new != object.__new__:
+            return has_args(new)
+        return has_args(getattr(func, "__init__", new))
 
     try:
         return bool(func.__code__.co_flags & 0x04)
@@ -39,10 +39,10 @@ def has_kwargs(func):
     "Whether the function has **kwargs."
 
     if isinstance(func, type):
-        init = getattr(func, "__init__", None)
-        if init != object.__init__:
-            return has_kwargs(init)
-        return has_kwargs(func.__new__)
+        new = getattr(func, "__new__", None)
+        if new != object.__new__:
+            return has_kwargs(new)
+        return has_kwargs(getattr(func, "__init__", new))
 
     try:
         return bool(func.__code__.co_flags & 0x08)
