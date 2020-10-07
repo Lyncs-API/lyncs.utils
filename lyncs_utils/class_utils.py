@@ -3,6 +3,7 @@ Some recurring utils used all along the package
 """
 
 __all__ = [
+    "add_to",
     "default_repr_pretty",
     "add_parameters_to_doc",
     "add_kwargs_of",
@@ -12,6 +13,12 @@ __all__ = [
 from types import MethodType
 from copy import copy
 from inspect import signature, _empty
+
+
+def add_to(cls):
+    "Decorator for adding a function to a class"
+
+    return lambda fnc: setattr(cls, fnc.__name__, fnc)
 
 
 def default_repr_pretty(self, printer, cycle=False):
