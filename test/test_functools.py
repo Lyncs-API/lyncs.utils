@@ -26,14 +26,17 @@ def test_has_args():
     f5 = lambda *args, **kwargs: None
 
     class f6:
-        def __init__(*args, **kwargs):
+        def __init__(self, *args, **kwargs):
             pass
 
     class f7:
         pass
 
     class f8:
-        def __new__(*args, **kwargs):
+        def __new__(cls, *args, **kwargs):
+            pass
+
+        def __init__(self):
             pass
 
     assert not has_args(f1)
@@ -65,14 +68,17 @@ def test_has_kwargs():
     f5 = lambda *args, **kwargs: None
 
     class f6:
-        def __init__(*args, **kwargs):
+        def __init__(self, *args, **kwargs):
             pass
 
     class f7:
         pass
 
     class f8:
-        def __new__(*args, **kwargs):
+        def __new__(cls, *args, **kwargs):
+            pass
+
+        def __init__(self):
             pass
 
     assert not has_kwargs(f1)
