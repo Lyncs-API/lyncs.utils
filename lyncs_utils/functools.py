@@ -37,7 +37,7 @@ def get_func(obj):
     if isinstance(obj, partial):
         return get_func(obj.func)
 
-    # instance or nothine
+    # instance or nothing
     return getattr(obj, "__call__", obj)
 
 
