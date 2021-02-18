@@ -3,6 +3,16 @@ from functools import partial
 from lyncs_utils.functools import *
 
 
+def test_is_keyword():
+    assert is_keyword("foo")
+    assert is_keyword("_foo")
+    assert is_keyword("_foo123")
+    assert not is_keyword("foo/bar")
+    assert not is_keyword("1foo")
+    assert not is_keyword("#foo")
+    assert not is_keyword(1)
+
+
 def test_varnames():
     def f(a, b, c=1, d=2):
         pass

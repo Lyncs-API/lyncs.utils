@@ -1,6 +1,7 @@
 "Tools for functions"
 
 __all__ = [
+    "is_keyword",
     "get_varnames",
     "has_args",
     "has_kwargs",
@@ -9,6 +10,16 @@ __all__ = [
 ]
 
 from functools import partial
+import re
+
+KEYWORD = re.compile("[A-Za-z_][A-Za-z0-9_]*")
+
+
+def is_keyword(key):
+    "Whether the given key is a valid function keyword"
+    if isinstance(key, str):
+        return KEYWORD.fullmatch(key)
+    return False
 
 
 def get_varnames(func):
