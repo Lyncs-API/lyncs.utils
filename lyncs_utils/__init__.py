@@ -8,3 +8,4 @@ from .class_utils import *
 from .extensions import *
 from .indexes import *
 from .functools import *
+from .gammas import *
