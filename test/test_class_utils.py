@@ -1,5 +1,11 @@
 from IPython.lib.pretty import pretty
-from lyncs_utils import compute_property, default_repr_pretty, add_kwargs_of, add_to
+from lyncs_utils import (
+    compute_property,
+    default_repr_pretty,
+    add_kwargs_of,
+    add_to,
+    call_method,
+)
 from random import random
 
 
@@ -22,6 +28,9 @@ class Foo:
 
     def method(self):
         pass
+
+    def get_length(self):
+        return self.length
 
     @add_kwargs_of(__init__)
     def decorated(self, **kwargs):
@@ -63,3 +72,10 @@ def test_compute_property():
     foo.random_list.append("foo")
     assert len(foo.random_list) == 10
     assert "foo" not in foo.random_list
+
+
+def test_call_method():
+    foo = Foo(10)
+    assert call_method(foo, "get_length") == 10
+    assert call_method(foo, foo.get_length) == 10
+    assert call_method(foo, Foo.get_length) == 10

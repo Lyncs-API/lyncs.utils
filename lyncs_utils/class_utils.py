@@ -8,6 +8,7 @@ __all__ = [
     "add_parameters_to_doc",
     "add_kwargs_of",
     "compute_property",
+    "call_method",
 ]
 
 from types import MethodType
@@ -189,3 +190,14 @@ class compute_property(property):
         except AttributeError:
             setattr(obj, self.key, super().__get__(obj, owner))
             return self.__get__(obj, owner)
+
+
+def call_method(self, method, *args, **kwargs):
+    "Calls a method of the class. Method can be either a string, function or a method itself"
+    if isinstance(method, str):
+        return getattr(self, method)(*args, **kwargs)
+    if hasattr(method, "__self__") and method.__self__ is self:
+        return method(*args, **kwargs)
+    if callable(method):
+        return method(self, *args, **kwargs)
+    raise TypeError(f"Unexpected type {type(method)}")
