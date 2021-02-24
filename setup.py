@@ -6,6 +6,7 @@ setup(
         "lyncs_setuptools",
         "gitpython",
         "cmake",
+        "numpy",
     ],
     extras_require={"test": ["pytest", "pytest-cov", "ipython"]},
 )
