@@ -8,6 +8,7 @@ __all__ = [
     "add_parameters_to_doc",
     "add_kwargs_of",
     "compute_property",
+    "static_property",
     "call_method",
 ]
 
@@ -190,6 +191,20 @@ class compute_property(property):
         except AttributeError:
             setattr(obj, self.key, super().__get__(obj, owner))
             return self.__get__(obj, owner)
+
+
+class static_property:
+    "Decorator similar to staticmethod but returns a property"
+
+    def __init__(self, fnc):
+        self.fget = fnc
+        self.__doc__ = fnc.__doc__
+        self.__name__ = fnc.__name__
+
+    def __get__(self, obj, owner=None):
+        if obj is None:
+            return self.fget()
+        return self.fget()
 
 
 def call_method(self, method, *args, **kwargs):
