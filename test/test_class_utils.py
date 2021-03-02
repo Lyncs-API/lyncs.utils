@@ -82,6 +82,7 @@ def test_compute_property():
 def test_static_property():
     foo = Foo(10)
     assert foo.pi == 3.14
+    assert Foo.pi == 3.14
 
 
 def test_call_method():

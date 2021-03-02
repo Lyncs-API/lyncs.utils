@@ -199,10 +199,11 @@ class static_property:
     def __init__(self, fnc):
         self.fget = fnc
         self.__doc__ = fnc.__doc__
+        self.__name__ = fnc.__name__
 
     def __get__(self, obj, owner=None):
         if obj is None:
-            return self
+            return self.fget()
         return self.fget()
 
 
