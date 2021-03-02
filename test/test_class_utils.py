@@ -1,6 +1,7 @@
 from IPython.lib.pretty import pretty
 from lyncs_utils import (
     compute_property,
+    static_property,
     default_repr_pretty,
     add_kwargs_of,
     add_to,
@@ -15,6 +16,10 @@ class Foo:
         self.bar = bar
 
     _repr_pretty_ = default_repr_pretty
+
+    @static_property
+    def pi():
+        return 3.14
 
     @compute_property
     def random(self):
@@ -72,6 +77,11 @@ def test_compute_property():
     foo.random_list.append("foo")
     assert len(foo.random_list) == 10
     assert "foo" not in foo.random_list
+
+
+def test_static_property():
+    foo = Foo(10)
+    assert foo.pi == 3.14
 
 
 def test_call_method():
