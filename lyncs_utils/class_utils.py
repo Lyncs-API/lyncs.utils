@@ -195,7 +195,6 @@ class compute_property(property):
 
 class static_property:
     "Decorator similar to staticmethod but returns a property"
-    __slots__ = ["fget", "__doc__"]
 
     def __init__(self, fnc):
         self.fget = fnc
