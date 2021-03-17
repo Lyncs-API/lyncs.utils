@@ -10,10 +10,13 @@ __all__ = [
 
 from functools import reduce
 
+try:
+    from math import prod
+except ImportError:
 
-def prod(arr):
-    "Returns the product of the elements"
-    return reduce((lambda x, y: x * y), arr, 1)
+    def prod(arr):
+        "Returns the product of the elements"
+        return reduce((lambda x, y: x * y), arr, 1)
 
 
 def factors(num):
