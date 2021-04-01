@@ -22,7 +22,7 @@ except ImportError:
 def factors(num):
     "Returns the list of factors of n"
     assert isinstance(num, int), "Num must be int"
-    for i in range(2, int(num ** 0.5) + 1):
+    for i in range(2, num//2):
         if num % i == 0:
             yield i
     yield num
