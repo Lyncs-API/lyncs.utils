@@ -50,9 +50,17 @@ class Foo:
 def test_add_to():
     @add_to(Foo)
     def added(self):
-        pass
+        return 1234
+
+    @add_to(Foo)
+    class Added:
+        def __new__(cls, foo):
+            return 5678
 
     assert hasattr(Foo, "added")
+    assert Foo(0).added() == added(None)
+    assert hasattr(Foo, "Added")
+    assert Foo(0).Added() == Added(None)
 
 
 def test_repr_pretty():
