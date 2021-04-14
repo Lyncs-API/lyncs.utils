@@ -1,4 +1,7 @@
-from lyncs_utils import isiterable, single_true, interactive
+import sys
+from pytest import raises
+import lyncs_utils
+from lyncs_utils import isiterable, single_true, interactive, version
 
 
 def test_isiterable():
@@ -23,3 +26,20 @@ def test_single_true():
 
 def test_interactive():
     assert not interactive()
+
+
+def test_version():
+    pyv = sys.version_info
+    num = f"{pyv.major}.{pyv.minor}.{pyv.micro}"
+    assert version(num)
+    assert version(num, opr="ge")
+    assert version(num, opr="eq")
+    assert version(num, opr="le")
+    assert not version(num, opr="gt")
+    assert not version(num, opr="ne")
+    assert not version(num, opr="lt")
+
+    assert version(lyncs_utils.__version__, pkg=lyncs_utils)
+
+    with raises(TypeError):
+        version(num, opr=1)

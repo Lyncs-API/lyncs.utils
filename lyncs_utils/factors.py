@@ -10,16 +10,19 @@ __all__ = [
 
 from functools import reduce
 
+try:
+    from math import prod
+except ImportError:
 
-def prod(arr):
-    "Returns the product of the elements"
-    return reduce((lambda x, y: x * y), arr, 1)
+    def prod(arr):
+        "Returns the product of the elements"
+        return reduce((lambda x, y: x * y), arr, 1)
 
 
 def factors(num):
     "Returns the list of factors of n"
     assert isinstance(num, int), "Num must be int"
-    for i in range(2, int(num ** 0.5) + 1):
+    for i in range(2, num // 2):
         if num % i == 0:
             yield i
     yield num
