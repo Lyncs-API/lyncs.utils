@@ -14,7 +14,7 @@ __all__ = [
 import os
 import struct
 from functools import wraps, partial
-from io import IOBase, FileIO
+from io import IOBase
 from pathlib import Path
 from tempfile import _TemporaryFileWrapper
 
