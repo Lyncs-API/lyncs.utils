@@ -1,5 +1,5 @@
 """
-Some recurring utils used all along the package
+Functions and decorator for classes.
 """
 
 __all__ = [
