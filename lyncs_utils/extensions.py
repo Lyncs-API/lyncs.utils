@@ -7,6 +7,7 @@ __all__ = [
     "count",
     "redirect_stdout",
     "FreezableDict",
+    "cache",
 ]
 
 import io
@@ -17,6 +18,13 @@ import tempfile
 from functools import wraps
 from itertools import count as _count
 from contextlib import redirect_stdout as _redirect_stdout
+
+try:
+    from functools import cache
+except ImportError:
+    from functools import lru_cache
+
+    cache = lru_cache(maxsize=None)
 
 
 class count(_count):

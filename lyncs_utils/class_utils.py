@@ -1,5 +1,5 @@
 """
-Some recurring utils used all along the package
+Functions and decorator for classes.
 """
 
 __all__ = [
@@ -9,6 +9,9 @@ __all__ = [
     "add_kwargs_of",
     "compute_property",
     "static_property",
+    "staticproperty",
+    "class_property",
+    "classproperty",
     "call_method",
 ]
 
@@ -34,7 +37,7 @@ def default_repr_pretty(self, printer, cycle=False):
     Default _repr_pretty_ for lyncs classes
     """
 
-    name = (self.type if hasattr(self, "type") else type(self).__name__) + "("
+    name = type(self).__name__ + "("
     printer.begin_group(len(name), name)
 
     found_first = False
@@ -202,15 +205,37 @@ class compute_property(property):
 class static_property:
     "Decorator similar to staticmethod but returns a property"
 
-    def __init__(self, fnc):
+    def __init__(self, fnc=None):
         self.fget = fnc
-        self.__doc__ = fnc.__doc__
-        self.__name__ = fnc.__name__
+        self.__doc__ = getattr(fnc, "__doc__", "")
+        self.__name__ = getattr(fnc, "__name__", "")
 
-    def __get__(self, obj, owner=None):
-        if obj is None:
-            return self.fget()
+    def __get__(self, obj, cls=None):
         return self.fget()
+
+    def getter(self, fnc):
+        self.fget = fnc
+        return self
+
+
+staticproperty = static_property
+
+
+class class_property:
+    def __init__(self, fnc=None):
+        self.fget = fnc
+        self.__doc__ = getattr(fnc, "__doc__", "")
+        self.__name__ = getattr(fnc, "__name__", "")
+
+    def __get__(self, obj, cls=None):
+        return self.fget(cls)
+
+    def getter(self, fnc):
+        self.fget = fnc
+        return self
+
+
+classproperty = class_property
 
 
 def call_method(self, method, *args, **kwargs):

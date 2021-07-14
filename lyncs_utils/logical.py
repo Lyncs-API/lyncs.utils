@@ -34,7 +34,7 @@ def isiterable(obj, types=None):
 
 
 def single_true(iterable):
-    """ Returns if one and only one element of the argument is True """
+    """Returns if one and only one element of the argument is True"""
     i = iter(iterable)
     return any(i) and not any(i)
 
