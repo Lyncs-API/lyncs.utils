@@ -47,6 +47,7 @@ def test_read_struct():
         struct = read_struct(filename, "%dc" % len(data))
         assert data == b"".join(struct)
 
+
 def test_write_struct():
     data = b"A very random string 123456"
     with tempfile.NamedTemporaryFile() as fp:
