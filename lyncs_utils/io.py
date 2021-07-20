@@ -3,16 +3,19 @@ Tools for I/O
 """
 
 __all__ = [
+    "fopen",
     "open_file",
     "read",
     "write",
     "read_struct",
+    "write_struct",
     "file_size",
     "to_path",
 ]
 
 import os
 import struct
+from contextlib import contextmanager
 from functools import wraps, partial
 from io import IOBase
 from pathlib import Path
@@ -24,20 +27,28 @@ FileLike = (
 )
 
 
+@contextmanager
+def fopen(_fp, flag="rb"):
+    "Flexible open function, that opens the file if needed"
+    if isinstance(_fp, FileLike):
+        yield _fp
+    else:
+        with open(_fp, flag) as fptr:
+            yield fptr
+
+
 def open_file(fnc=None, arg=0, flag="rb"):
     "Decorator that returns a wrapper that opens the file (at position arg) if needed"
 
-    if not fnc:
+    if fnc is None:
         return partial(open_file, arg=arg, flag=flag)
 
     @wraps(fnc)
     def wrapped(*args, **kwargs):
         if len(args) <= arg:
             raise ValueError(f"filename not found at position {arg}")
-        if isinstance(args[arg], FileLike):
-            return fnc(*args, **kwargs)
         args = list(args)
-        with open(args[arg], flag) as fptr:
+        with fopen(args[arg], flag) as fptr:
             args[arg] = fptr
             return fnc(*args, **kwargs)
 
@@ -63,6 +74,12 @@ def read_struct(_fp, format):
     data = read(_fp, struct.calcsize(format))
     data = struct.unpack_from(format, data)
     return data
+
+
+def write_struct(_fp, format, *data):
+    "Writes struct to file of given format (see struct)"
+    data = struct.pack(format, *data)
+    write(_fp, data)
 
 
 @open_file

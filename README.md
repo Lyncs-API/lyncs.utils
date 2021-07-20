@@ -73,6 +73,7 @@ Tools for I/O. See `lyncs_utils.io`.
 - `read(fname/fp)`: Reads data from file
 - `write(fname/fp)`: Writes data into the file
 - `read_struct(fname/fp, format)`: Reads a structure from file
+- `write_struct(fname/fp, format, *data)`: Writes a structure from file
 - `file_size(fname/fp)`: Returns the file size
 - `to_path(fname/fp)`: Reaturns a Path object to the file
 
