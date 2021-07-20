@@ -48,6 +48,18 @@ def test_read_struct():
         assert data == b"".join(struct)
 
 
+def test_write_struct():
+    data = b"A very random string 123456"
+    with tempfile.NamedTemporaryFile() as fp:
+        filename = fp.name
+        write_struct(fp, "%ds" % len(data), data)
+        fp.seek(0)
+        struct = read_struct(fp, "%ds" % len(data))
+        assert data == struct[0]
+        struct = read_struct(filename, "%ds" % len(data))
+        assert data == struct[0]
+
+
 def test_file_size():
     data = b"A very random string 123456"
     with tempfile.NamedTemporaryFile() as fp:
