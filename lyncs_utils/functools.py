@@ -117,3 +117,9 @@ def select_kwargs(func, *args, **kwargs):
     varnames = get_varnames(func)[len(args) :]
     kwargs = {key: val for key, val in kwargs.items() if key in varnames}
     return func(*args, **kwargs)
+
+
+def called_as_decorator():
+    "Returns if the current function has been called as a decorator"
+    lines = inspect.stack(context=2)[1].code_context
+    return any(line.strip().startswith("@") for line in lines)
