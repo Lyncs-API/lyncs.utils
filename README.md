@@ -45,6 +45,7 @@ Extensions of Python standard functions. See `lyncs_utils.extensions`.
 - `redirect_stdout`: See contextlib.redirect_stdout. Now, it redirects stdout also from C
 - `FreezableDict`: Extension of dict. A dictionary that can be frozen at any moment.
 - `cache`: Enables functools.cache for all versions of Python
+- `lazy_import(module)`: Lazy import for modules
 
 ### Factors
 
