@@ -1,6 +1,6 @@
 "Collection of generic-purpose and stand-alone functions"
 
-__version__ = "0.2.1"
+__version__ = "0.2.2"
 
 from .factors import *
 from .logical import *
