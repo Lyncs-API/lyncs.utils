@@ -1,11 +1,12 @@
 import ctypes
 import os
 import io
+import sys
 import tempfile
 from lyncs_utils import redirect_stdout
 from pytest import raises
 from itertools import count as _count
-from lyncs_utils import count, FreezableDict
+from lyncs_utils import count, FreezableDict, lazy_import
 
 
 def test_count():
@@ -13,6 +14,20 @@ def test_count():
     counter = count()
     assert list(counter(5)) == list(range(5))
     assert list(counter(5)) == list(range(5, 10))
+
+
+def test_lazy_import():
+    utils = lazy_import("lyncs_utils")
+    assert isinstance(utils, type(os))
+
+    assert "lyncs_setuptools" not in sys.modules
+    setup = lazy_import("lyncs_setuptools")
+    assert "lyncs_setuptools" in sys.modules
+    assert isinstance(setup, type(os))
+    assert setup.__name__ == "lyncs_setuptools"
+
+    with raises(ImportError):
+        lazy_import("non.existing.module")
 
 
 def test_redirect_stdout():

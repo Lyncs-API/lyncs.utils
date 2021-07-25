@@ -8,6 +8,7 @@ __all__ = [
     "redirect_stdout",
     "FreezableDict",
     "cache",
+    "lazy_import",
 ]
 
 import io
@@ -15,6 +16,7 @@ import os
 import sys
 import ctypes
 import tempfile
+import importlib
 from functools import wraps
 from itertools import count as _count
 from contextlib import redirect_stdout as _redirect_stdout
@@ -33,6 +35,22 @@ class count(_count):
     def __call__(self, num):
         for _ in range(num):
             yield next(self)
+
+
+def lazy_import(name):
+    "Lazy import for modules"
+    # Based on: https://stackoverflow.com/questions/42703908/how-do-i-use-importlib-lazyloader
+    try:
+        return sys.modules[name]
+    except KeyError:
+        spec = importlib.util.find_spec(name)
+        if spec is None:
+            raise ImportError(f"Module not found: {name}")
+        sys.modules[name] = importlib.util.module_from_spec(spec)
+        loader = importlib.util.LazyLoader(spec.loader)
+        # Make module with proper locking and get it inserted into sys.modules.
+        loader.exec_module(sys.modules[name])
+        return sys.modules[name]
 
 
 class redirect_stdout(_redirect_stdout):
