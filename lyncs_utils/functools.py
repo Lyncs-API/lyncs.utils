@@ -11,6 +11,7 @@ __all__ = [
 
 from functools import partial
 import re
+import inspect
 
 KEYWORD = re.compile("[A-Za-z_][A-Za-z0-9_]*")
 
