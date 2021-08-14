@@ -1,4 +1,3 @@
-from IPython.lib.pretty import pretty
 from lyncs_utils import (
     compute_property,
     static_property,
@@ -9,6 +8,15 @@ from lyncs_utils import (
     call_method,
 )
 from random import random
+import pytest
+
+try:
+    from IPython.lib.pretty import pretty
+
+    no_ipython = False
+except ImportError:
+    no_ipython = False
+mark_ipython = pytest.mark.skipif(noipython, reason="Ipython not available")
 
 
 class Foo:
@@ -68,6 +76,7 @@ def test_add_to():
     assert Foo(0).Added() == Added(None)
 
 
+@mark_ipython
 def test_repr_pretty():
     assert pretty(Foo(10)) == "Foo(10)"
     assert pretty(Foo(10, bar="bar")) == "Foo(10, bar='bar')"
