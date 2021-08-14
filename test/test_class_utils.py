@@ -16,7 +16,7 @@ try:
     no_ipython = False
 except ImportError:
     no_ipython = False
-mark_ipython = pytest.mark.skipif(noipython, reason="Ipython not available")
+mark_ipython = pytest.mark.skipif(no_ipython, reason="Ipython not available")
 
 
 class Foo:
