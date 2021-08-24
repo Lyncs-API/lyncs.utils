@@ -7,9 +7,11 @@ __all__ = [
     "has_kwargs",
     "apply_annotations",
     "select_kwargs",
+    "spy",
 ]
 
-from functools import partial
+from functools import partial, wraps
+from logging import debug
 import re
 import inspect
 
@@ -124,3 +126,24 @@ def called_as_decorator():
     "Returns if the current function has been called as a decorator"
     lines = inspect.stack(context=2)[1].code_context
     return any(line.strip().startswith("@") for line in lines)
+
+
+def spy(fnc):
+    """
+    Decorator that will log debug information when the function is called.
+    It requires the default logger to be set to debug level.
+
+    ```
+    import logging
+    logging.getLogger().setLevel(level=logging.DEBUG)
+    ```
+    """
+
+    @wraps(fnc)
+    def wrapper(*args, **kwargs):
+        out = fnc(*args, **kwargs)
+        message = f"{fnc.__name__}({args}, {kwargs}) = {out}"
+        debug(f"{fnc.__name__}({args}, {kwargs}) = {out}")
+        return out
+
+    return wrapper
