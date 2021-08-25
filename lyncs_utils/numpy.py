@@ -6,21 +6,27 @@ __all__ = [
     "numpy",
     "outer",
     "gamma_matrices",
+    "requires_numpy",
 ]
 
-from .extensions import lazy_import
+from .extensions import lazy_import, raiseif
 
 try:
     numpy = lazy_import("numpy")
-except ImportError:
+    err = None
+except ImportError as err:
     numpy = None
 
+requires_numpy = raiseif(numpy is None, err)
 
+
+@requires_numpy
 def outer(left, right):
     "Outer product between two arrays"
     return np.kron(left, right)
 
 
+@requires_numpy
 def gamma_matrices(dim=4, euclidean=True):
     "Based on https://en.wikipedia.org/wiki/Higher-dimensional_gamma_matrices"
 
