@@ -92,3 +92,10 @@ Functions returning or manipulating logical values (boolean). See `lyncs_utils.l
 - `isiterable(obj)`: Whether the object is iteragle or not
 - `interactive()`: Whether Python has been run in interactive mode
 - `version(num, pkg)`: Compares the version number to the one of a package
+
+### Numpy
+
+Functions returning or manipulating Numpy arrays (available with `lyncs[numpy]`)
+
+- `outer(A,B)`: outer product, alias of `numpy.kron`.
+- `gamma_matrices(dim, euclidean=True)`: returns n-dimensional gamma matrices
