@@ -5,5 +5,7 @@ setup(
     install_requires=[
         "numpy",
     ],
-    extras_require={"test": ["pytest", "pytest-cov", "ipython", "numpy", "lyncs_setuptools"]},
+    extras_require={
+        "test": ["pytest", "pytest-cov", "ipython", "numpy", "lyncs_setuptools"]
+    },
 )

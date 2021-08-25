@@ -50,6 +50,7 @@ Extensions of Python standard functions. See `lyncs_utils.extensions`.
 - `cache`: Enables functools.cache for all versions of Python
 - `lazy_import(module)`: Lazy import for modules
 - `setitems(arr, vals)`: Sets items of an iterable object
+- `commonsuffix(words)`: Finds common suffix in words
 
 ### Factors
 

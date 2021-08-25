@@ -10,6 +10,7 @@ __all__ = [
     "cache",
     "lazy_import",
     "setitems",
+    "commonsuffix",
 ]
 
 import io
@@ -21,6 +22,7 @@ import importlib
 from functools import wraps
 from itertools import count as _count
 from contextlib import redirect_stdout as _redirect_stdout
+from os.path import commonprefix
 from .logical import isiterable
 
 try:
@@ -70,6 +72,13 @@ def setitems(arr, vals):
             setitems(arr[i], val)
         else:
             arr[i] = val
+
+
+def commonsuffix(words):
+    "Finds common suffix between list of words"
+    reverse = lambda word: word[::-1]
+    words = list(map(reverse, words))
+    return commonprefix(words)[::-1]
 
 
 class redirect_stdout(_redirect_stdout):

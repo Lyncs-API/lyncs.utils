@@ -45,6 +45,11 @@ def test_setitems():
     assert (arr == rand).all()
 
 
+def test_commonsuffix():
+    assert commonsuffix(["foo", "bar"]) == ""
+    assert commonsuffix(["foo.txt", "bar.txt"]) == ".txt"
+
+
 def test_redirect_stdout():
     libc = ctypes.CDLL(None)
 
