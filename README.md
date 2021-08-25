@@ -46,6 +46,7 @@ Extensions of Python standard functions. See `lyncs_utils.extensions`.
 - `FreezableDict`: Extension of dict. A dictionary that can be frozen at any moment.
 - `cache`: Enables functools.cache for all versions of Python
 - `lazy_import(module)`: Lazy import for modules
+- `setitems(arr, vals)`: Sets items of an iterable object
 
 ### Factors
 
@@ -65,6 +66,7 @@ Tools for functions. See `lyncs_utils.functools`.
 - `has_kwargs(fnc)`: Whether the function uses **kwargs
 - `apply_annotations(fnc, *args, **kwargs)`: Applies the annotations of fnc to the respective *args, **kwargs
 - `select_kwargs(fnc, *args, **kwargs)`: Calls fnc passing *args and ONLY the applicable **kwargs
+- `@spy`: Decorator that will log debug information when the function is called
 
 ### I/O
 
