@@ -8,7 +8,10 @@
 [![pylint](https://img.shields.io/badge/pylint%20score-9.7%2F10-green?logo=python&logoColor=white)](http://pylint.pycqa.org/)
 [![black](https://img.shields.io/badge/code%20style-black-000000.svg?logo=codefactor&logoColor=white)](https://github.com/ambv/black)
 
-This package provides a collection of generic-purpose and stand-alone functions that are used in multiple places of Lyncs.
+This package provides a collection of generic-purpose and stand-alone functions that are of common use.
+A characteristic of the package is to be lightweight and dependencies-free.
+Please, consider its installation if any of the following function can be of use in your project.
+Any addition to the list is very welcome!
 
 
 ## Installation
