@@ -3,7 +3,6 @@ import os
 import io
 import sys
 import tempfile
-import numpy
 from lyncs_utils import redirect_stdout
 from pytest import raises, mark
 from itertools import count as _count
