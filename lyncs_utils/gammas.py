@@ -3,11 +3,17 @@ Gamma matrices
 """
 
 __all__ = [
+    "numpy",
+    "outer",
     "gamma_matrices",
 ]
 
-import numpy as np
+from .extensions import lazy_import
 
+try:
+    numpy = lazy_import("numpy")
+except ImportError:
+    numpy = None
 
 def outer(left, right):
     "Outer product between two arrays"
@@ -20,9 +26,9 @@ def gamma_matrices(dim=4, euclidean=True):
     assert dim > 0 and isinstance(dim, int)
 
     sigmas = (
-        np.array(((0, 1), (1, 0))),
-        np.array(((0, -1j), (1j, 0))),
-        np.array(((1, 0), (0, -1))),
+        numpy.array(((0, 1), (1, 0))),
+        numpy.array(((0, -1j), (1j, 0))),
+        numpy.array(((1, 0), (0, -1))),
     )
 
     chiral = sigmas[2]
@@ -33,10 +39,10 @@ def gamma_matrices(dim=4, euclidean=True):
         for gamma in gammas:
             new.append(outer(gamma, sigmas[-1]))
         new.append(
-            outer(np.identity(2 ** (idx + 1)), (1 if euclidean else 1j) * sigmas[0])
+            outer(numpy.identity(2 ** (idx + 1)), (1 if euclidean else 1j) * sigmas[0])
         )
         new.append(
-            outer(np.identity(2 ** (idx + 1)), (1 if euclidean else 1j) * sigmas[1])
+            outer(numpy.identity(2 ** (idx + 1)), (1 if euclidean else 1j) * sigmas[1])
         )
         gammas = new
         chiral = outer(chiral, sigmas[2])

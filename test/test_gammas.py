@@ -1,7 +1,9 @@
-from lyncs_utils import gamma_matrices
-import numpy as np
+import pytest
+from lyncs_utils.gammas import *
 
+skip = pytest.mark.skipif(numpy is None, reason="Numpy not available")
 
+@skip
 def test_gammas_minkowsky():
 
     for dim in range(1, 10):
@@ -22,7 +24,7 @@ def test_gammas_minkowsky():
         if dim % 2 == 0:
             assert ((1j) ** (dim // 2 - 1) * prod == g[-1]).all()
 
-
+@skip
 def test_gammas_euclidean():
 
     for dim in range(1, 10):
