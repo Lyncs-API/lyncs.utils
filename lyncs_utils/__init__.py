@@ -8,5 +8,5 @@ from .class_utils import *
 from .extensions import *
 from .indexes import *
 from .functools import *
-from .gammas import *
+from .numpy import *
 from .io import *

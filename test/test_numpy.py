@@ -1,5 +1,5 @@
 import pytest
-from lyncs_utils.gammas import *
+from lyncs_utils.numpy import *
 
 skip = pytest.mark.skipif(numpy is None, reason="Numpy not available")
 
