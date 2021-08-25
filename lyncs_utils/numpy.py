@@ -15,6 +15,7 @@ try:
 except ImportError:
     numpy = None
 
+
 def outer(left, right):
     "Outer product between two arrays"
     return np.kron(left, right)

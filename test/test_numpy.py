@@ -3,6 +3,7 @@ from lyncs_utils.gammas import *
 
 skip = pytest.mark.skipif(numpy is None, reason="Numpy not available")
 
+
 @skip
 def test_gammas_minkowsky():
 
@@ -23,6 +24,7 @@ def test_gammas_minkowsky():
 
         if dim % 2 == 0:
             assert ((1j) ** (dim // 2 - 1) * prod == g[-1]).all()
+
 
 @skip
 def test_gammas_euclidean():

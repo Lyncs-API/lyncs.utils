@@ -4,6 +4,6 @@ setup(
     "lyncs_utils",
     extras_require={
         "numpy": ["numpy"],
-        "test": ["pytest", "pytest-cov", "ipython", "numpy", "lyncs_setuptools"]
+        "test": ["pytest", "pytest-cov", "ipython", "numpy", "lyncs_setuptools"],
     },
 )
