@@ -51,6 +51,7 @@ Extensions of Python standard functions. See `lyncs_utils.extensions`.
 - `lazy_import(module)`: Lazy import for modules
 - `setitems(arr, vals)`: Sets items of an iterable object
 - `commonsuffix(words)`: Finds common suffix in words
+- `@raiseif(fail, error)`: Decorator that raises `error` if `fail` is `True`
 
 ### Factors
 

@@ -5,9 +5,10 @@ import sys
 import tempfile
 import numpy
 from lyncs_utils import redirect_stdout
-from pytest import raises
+from pytest import raises, mark
 from itertools import count as _count
 from lyncs_utils.extensions import *
+from lyncs_utils.numpy import numpy
 
 
 def test_count():
@@ -31,6 +32,7 @@ def test_lazy_import():
         lazy_import("non.existing.module")
 
 
+@mark.skipif(numpy is None, reason="Numpy not available")
 def test_setitems():
     arr = numpy.zeros((5, 4, 6))
     setitems(arr, 13)
@@ -48,6 +50,15 @@ def test_setitems():
 def test_commonsuffix():
     assert commonsuffix(["foo", "bar"]) == ""
     assert commonsuffix(["foo.txt", "bar.txt"]) == ".txt"
+
+
+def test_raiseif():
+    fnc = raiseif(False, RuntimeError())(lambda: "foo")
+    assert fnc() == "foo"
+
+    fnc = raiseif(True, RuntimeError())(lambda: "foo")
+    with raises(RuntimeError):
+        fnc()
 
 
 def test_redirect_stdout():
