@@ -13,17 +13,18 @@ from .extensions import lazy_import, raiseif
 
 try:
     numpy = lazy_import("numpy")
-    err = None
+    _err = None
 except ImportError as err:
     numpy = None
+    _err = err
 
-requires_numpy = raiseif(numpy is None, err)
+requires_numpy = raiseif(numpy is None, _err)
 
 
 @requires_numpy
 def outer(left, right):
     "Outer product between two arrays"
-    return np.kron(left, right)
+    return numpy.kron(left, right)
 
 
 @requires_numpy
