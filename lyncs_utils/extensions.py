@@ -24,7 +24,6 @@ from functools import wraps
 from itertools import count as _count
 from contextlib import redirect_stdout as _redirect_stdout
 from os.path import commonprefix
-from .logical import isiterable
 
 try:
     from functools import cache

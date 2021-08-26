@@ -69,16 +69,16 @@ def write(_fp, data):
     _fp.write(data)
 
 
-def read_struct(_fp, format):
+def read_struct(_fp, fmt):
     "Reads struct from file of given format (see struct)"
-    data = read(_fp, struct.calcsize(format))
-    data = struct.unpack_from(format, data)
+    data = read(_fp, struct.calcsize(fmt))
+    data = struct.unpack_from(fmt, data)
     return data
 
 
-def write_struct(_fp, format, *data):
+def write_struct(_fp, fmt, *data):
     "Writes struct to file of given format (see struct)"
-    data = struct.pack(format, *data)
+    data = struct.pack(fmt, *data)
     write(_fp, data)
 
 

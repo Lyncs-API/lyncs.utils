@@ -142,7 +142,6 @@ def spy(fnc):
     @wraps(fnc)
     def wrapper(*args, **kwargs):
         out = fnc(*args, **kwargs)
-        message = f"{fnc.__name__}({args}, {kwargs}) = {out}"
         debug(f"{fnc.__name__}({args}, {kwargs}) = {out}")
         return out
 
