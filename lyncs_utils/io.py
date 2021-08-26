@@ -28,27 +28,31 @@ FileLike = (
 
 
 @contextmanager
-def fopen(_fp, flag="rb"):
+def fopen(_fp, mode="rb", **kwargs):
     "Flexible open function, that opens the file if needed"
     if isinstance(_fp, FileLike):
         yield _fp
     else:
-        with open(_fp, flag) as fptr:
+        with open(_fp, mode=mode, **kwargs) as fptr:
             yield fptr
 
 
-def open_file(fnc=None, arg=0, flag="rb"):
+def open_file(fnc=None, arg=0, mode="rb", flag=None, **kwargs_open):
     "Decorator that returns a wrapper that opens the file (at position arg) if needed"
 
+    if flag is not None:
+        # Alias of mode, deprecated
+        mode = flag
+
     if fnc is None:
-        return partial(open_file, arg=arg, flag=flag)
+        return partial(open_file, arg=arg, mode=mode, **kwargs_open)
 
     @wraps(fnc)
     def wrapped(*args, **kwargs):
         if len(args) <= arg:
             raise ValueError(f"filename not found at position {arg}")
         args = list(args)
-        with fopen(args[arg], flag) as fptr:
+        with fopen(args[arg], mode=mode, **kwargs_open) as fptr:
             args[arg] = fptr
             return fnc(*args, **kwargs)
 
@@ -63,22 +67,22 @@ def read(_fp, size=None):
     return _fp.read(size)
 
 
-@open_file(flag="wb")
+@open_file(mode="wb")
 def write(_fp, data):
     "Writes data to file"
     _fp.write(data)
 
 
-def read_struct(_fp, format):
+def read_struct(_fp, fmt):
     "Reads struct from file of given format (see struct)"
-    data = read(_fp, struct.calcsize(format))
-    data = struct.unpack_from(format, data)
+    data = read(_fp, struct.calcsize(fmt))
+    data = struct.unpack_from(fmt, data)
     return data
 
 
-def write_struct(_fp, format, *data):
+def write_struct(_fp, fmt, *data):
     "Writes struct to file of given format (see struct)"
-    data = struct.pack(format, *data)
+    data = struct.pack(fmt, *data)
     write(_fp, data)
 
 

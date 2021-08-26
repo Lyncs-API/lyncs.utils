@@ -4,9 +4,10 @@ import io
 import sys
 import tempfile
 from lyncs_utils import redirect_stdout
-from pytest import raises
+from pytest import raises, mark
 from itertools import count as _count
-from lyncs_utils import count, FreezableDict, lazy_import
+from lyncs_utils.extensions import *
+from lyncs_utils.numpy import numpy
 
 
 def test_count():
@@ -28,6 +29,35 @@ def test_lazy_import():
 
     with raises(ImportError):
         lazy_import("non.existing.module")
+
+
+@mark.skipif(numpy is None, reason="Numpy not available")
+def test_setitems():
+    arr = numpy.zeros((5, 4, 6))
+    setitems(arr, 13)
+    assert (arr == 13).all()
+
+    setitems(arr, range(arr.shape[0]))
+    for i in range(arr.shape[0]):
+        assert (arr[i] == i).all()
+
+    rand = numpy.random.rand(*arr.shape) * 100
+    setitems(arr, rand)
+    assert (arr == rand).all()
+
+
+def test_commonsuffix():
+    assert commonsuffix(["foo", "bar"]) == ""
+    assert commonsuffix(["foo.txt", "bar.txt"]) == ".txt"
+
+
+def test_raiseif():
+    fnc = raiseif(False, RuntimeError())(lambda: "foo")
+    assert fnc() == "foo"
+
+    fnc = raiseif(True, RuntimeError())(lambda: "foo")
+    with raises(RuntimeError):
+        fnc()
 
 
 def test_redirect_stdout():

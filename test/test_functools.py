@@ -1,3 +1,5 @@
+import logging
+from io import StringIO
 from pytest import raises
 from functools import partial
 from lyncs_utils.functools import *
@@ -171,3 +173,34 @@ def test_select_kwargs():
     args, kwargs = select_kwargs(f, 1, b=2, c=3, d=4, e=5, f=6)
     assert args == (1, 2)
     assert kwargs == dict(c=3, d=4)
+
+
+def test_spy():
+    @spy
+    def foo(bar=None):
+        return "1234"
+
+    logger = logging.getLogger()
+    level = logger.getEffectiveLevel()
+
+    logger.setLevel(logging.DEBUG)
+    stream = StringIO()
+    handle = logging.StreamHandler(stream)
+    logger.addHandler(handle)
+    foo("hello")
+    logger.removeHandler(handle)
+    out = stream.getvalue()
+    assert "foo" in out
+    assert "hello" in out
+    assert "1234" in out
+
+    logger.setLevel(logging.WARNING)
+    stream = StringIO()
+    handle = logging.StreamHandler(stream)
+    logger.addHandler(handle)
+    foo("hello")
+    logger.removeHandler(handle)
+    out = stream.getvalue()
+    assert out == ""
+
+    logger.setLevel(level)

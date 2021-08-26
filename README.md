@@ -5,10 +5,13 @@
 [![license](https://img.shields.io/github/license/Lyncs-API/lyncs.utils?logo=github&logoColor=white)](https://github.com/Lyncs-API/lyncs.utils/blob/master/LICENSE)
 [![build & test](https://img.shields.io/github/workflow/status/Lyncs-API/lyncs.utils/build%20&%20test?logo=github&logoColor=white)](https://github.com/Lyncs-API/lyncs.utils/actions)
 [![codecov](https://img.shields.io/codecov/c/github/Lyncs-API/lyncs.utils?logo=codecov&logoColor=white)](https://codecov.io/gh/Lyncs-API/lyncs.utils)
-[![pylint](https://img.shields.io/badge/pylint%20score-9.5%2F10-green?logo=python&logoColor=white)](http://pylint.pycqa.org/)
+[![pylint](https://img.shields.io/badge/pylint%20score-9.7%2F10-green?logo=python&logoColor=white)](http://pylint.pycqa.org/)
 [![black](https://img.shields.io/badge/code%20style-black-000000.svg?logo=codefactor&logoColor=white)](https://github.com/ambv/black)
 
-This package provides a collection of generic-purpose and stand-alone functions that are used in multiple places of Lyncs.
+This package provides a collection of generic-purpose and stand-alone functions that are of common use.
+A characteristic of the package is to be lightweight and dependencies-free.
+Please, consider its installation if any of the following function can be of use in your project.
+Any addition to the list is very welcome!
 
 
 ## Installation
@@ -46,6 +49,9 @@ Extensions of Python standard functions. See `lyncs_utils.extensions`.
 - `FreezableDict`: Extension of dict. A dictionary that can be frozen at any moment.
 - `cache`: Enables functools.cache for all versions of Python
 - `lazy_import(module)`: Lazy import for modules
+- `setitems(arr, vals)`: Sets items of an iterable object
+- `commonsuffix(words)`: Finds common suffix in words
+- `@raiseif(fail, error)`: Decorator that raises `error` if `fail` is `True`
 
 ### Factors
 
@@ -65,6 +71,7 @@ Tools for functions. See `lyncs_utils.functools`.
 - `has_kwargs(fnc)`: Whether the function uses **kwargs
 - `apply_annotations(fnc, *args, **kwargs)`: Applies the annotations of fnc to the respective *args, **kwargs
 - `select_kwargs(fnc, *args, **kwargs)`: Calls fnc passing *args and ONLY the applicable **kwargs
+- `@spy`: Decorator that will log debug information when the function is called
 
 ### I/O
 
@@ -86,3 +93,10 @@ Functions returning or manipulating logical values (boolean). See `lyncs_utils.l
 - `isiterable(obj)`: Whether the object is iteragle or not
 - `interactive()`: Whether Python has been run in interactive mode
 - `version(num, pkg)`: Compares the version number to the one of a package
+
+### Numpy
+
+Functions returning or manipulating Numpy arrays (available with `lyncs[numpy]`)
+
+- `outer(A,B)`: outer product, alias of `numpy.kron`.
+- `gamma_matrices(dim, euclidean=True)`: returns n-dimensional gamma matrices

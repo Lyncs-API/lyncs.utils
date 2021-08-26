@@ -214,6 +214,7 @@ class static_property:
         return self.fget()
 
     def getter(self, fnc):
+        "Sets the getter function"
         self.fget = fnc
         return self
 
@@ -222,6 +223,8 @@ staticproperty = static_property
 
 
 class class_property:
+    "Decorator similar to classmethod but returns a property"
+
     def __init__(self, fnc=None):
         self.fget = fnc
         self.__doc__ = getattr(fnc, "__doc__", "")
@@ -231,6 +234,7 @@ class class_property:
         return self.fget(cls)
 
     def getter(self, fnc):
+        "Sets the getter function"
         self.fget = fnc
         return self
 

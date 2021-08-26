@@ -9,6 +9,9 @@ __all__ = [
     "FreezableDict",
     "cache",
     "lazy_import",
+    "setitems",
+    "commonsuffix",
+    "raiseif",
 ]
 
 import io
@@ -20,6 +23,7 @@ import importlib
 from functools import wraps
 from itertools import count as _count
 from contextlib import redirect_stdout as _redirect_stdout
+from os.path import commonprefix
 
 try:
     from functools import cache
@@ -51,6 +55,46 @@ def lazy_import(name):
         # Make module with proper locking and get it inserted into sys.modules.
         loader.exec_module(sys.modules[name])
         return sys.modules[name]
+
+
+def setitems(arr, vals):
+    "Sets items of an iterable object"
+    size = len(arr)
+    if hasattr(vals, "__len__"):
+        if len(vals) > size:
+            raise ValueError(
+                f"Values size ({len(vals)}) larger than array size ({size})"
+            )
+    else:
+        vals = (vals,) * size
+    for i, val in enumerate(vals):
+        if hasattr(arr[i], "__len__"):
+            setitems(arr[i], val)
+        else:
+            arr[i] = val
+
+
+def commonsuffix(words):
+    "Finds common suffix between list of words"
+    reverse = lambda word: word[::-1]
+    words = list(map(reverse, words))
+    return commonprefix(words)[::-1]
+
+
+def raiseif(fail, error):
+    "Decorator that raises error if condition is satisfied"
+
+    def decorator(fnc):
+        if not fail:
+            return fnc
+
+        @wraps(fnc)
+        def raiser(*args, **kwargs):
+            raise error
+
+        return raiser
+
+    return decorator
 
 
 class redirect_stdout(_redirect_stdout):
