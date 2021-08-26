@@ -28,12 +28,12 @@ FileLike = (
 
 
 @contextmanager
-def fopen(_fp, flag="rb"):
+def fopen(_fp, flag="rb", encoding="utf-8"):
     "Flexible open function, that opens the file if needed"
     if isinstance(_fp, FileLike):
         yield _fp
     else:
-        with open(_fp, flag) as fptr:
+        with open(_fp, flag, encoding=encoding) as fptr:
             yield fptr
 
 
