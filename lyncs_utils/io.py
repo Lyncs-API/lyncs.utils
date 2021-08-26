@@ -28,27 +28,31 @@ FileLike = (
 
 
 @contextmanager
-def fopen(_fp, flag="rb", encoding="utf-8"):
+def fopen(_fp, mode="rb", **kwargs):
     "Flexible open function, that opens the file if needed"
     if isinstance(_fp, FileLike):
         yield _fp
     else:
-        with open(_fp, flag, encoding=encoding) as fptr:
+        with open(_fp, mode=mode, **kwargs) as fptr:
             yield fptr
 
 
-def open_file(fnc=None, arg=0, flag="rb"):
+def open_file(fnc=None, arg=0, mode="rb", flag=None, **kwargs_open):
     "Decorator that returns a wrapper that opens the file (at position arg) if needed"
 
+    if flag is not None:
+        # Alias of mode, deprecated
+        mode = flag
+
     if fnc is None:
-        return partial(open_file, arg=arg, flag=flag)
+        return partial(open_file, arg=arg, mode=mode, **kwargs_open)
 
     @wraps(fnc)
     def wrapped(*args, **kwargs):
         if len(args) <= arg:
             raise ValueError(f"filename not found at position {arg}")
         args = list(args)
-        with fopen(args[arg], flag) as fptr:
+        with fopen(args[arg], mode=mode, **kwargs_open) as fptr:
             args[arg] = fptr
             return fnc(*args, **kwargs)
 
@@ -63,7 +67,7 @@ def read(_fp, size=None):
     return _fp.read(size)
 
 
-@open_file(flag="wb")
+@open_file(mode="wb")
 def write(_fp, data):
     "Writes data to file"
     _fp.write(data)
