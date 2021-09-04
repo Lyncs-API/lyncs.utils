@@ -73,6 +73,14 @@ Tools for functions. See `lyncs_utils.functools`.
 - `select_kwargs(fnc, *args, **kwargs)`: Calls fnc passing *args and ONLY the applicable **kwargs
 - `@spy`: Decorator that will log debug information when the function is called
 
+### Context Managers
+
+Functionalities using `contextmanager` by `contextlib` meant to be called within a with-statement.
+See `lyncs_utils.contextlib`.
+
+- `setting(obj, attr, value, default=None)`: Context manager that temporaly sets an attribute of an object.
+- `updating(obj, attr, value, default=None)`: Context manager that temporaly sets an item of an object.
+
 ### I/O
 
 Tools for I/O. See `lyncs_utils.io`.
