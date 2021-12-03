@@ -5,6 +5,7 @@ A collection of factorization utils
 __all__ = [
     "prod",
     "factors",
+    "sign",
     "prime_factors",
 ]
 
@@ -17,6 +18,13 @@ except ImportError:
     def prod(arr):
         "Returns the product of the elements"
         return reduce((lambda x, y: x * y), arr, 1)
+
+
+def sign(num):
+    "Sign of a number"
+    if num < 0:
+        return -1
+    return +1
 
 
 def factors(num):
