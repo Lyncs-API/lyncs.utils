@@ -3,11 +3,20 @@ Utils for indexes
 """
 
 __all__ = [
+    "first",
+    "last",
     "compact_indexes",
 ]
 
 from .logical import isiterable
 
+def first(iterable):
+    "Returns the first element of iterable"
+    return next(iter(iterable))
+
+def last(iterable):
+    "Returns the last element of iterable"
+    return next(reversed(iterable))
 
 def compact_indexes(indexes):
     """
