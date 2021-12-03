@@ -53,11 +53,12 @@ Extensions of Python standard functions. See `lyncs_utils.extensions`.
 - `commonsuffix(words)`: Finds common suffix in words
 - `@raiseif(fail, error)`: Decorator that raises `error` if `fail` is `True`
 
-### Factors
+### Math
 
-Factorization utils. See `lyncs_utils.factors`.
+Math utils. See `lyncs_utils.math`.
 
 - `prod(arr)`:  Enables math.prod for all versions of Python
+- `sign(n)`:  Sign of a number
 - `factors(n)`: Returns the list of factors of n
 - `prime_factors(n)`: Returns the list of prime factors of n
 
