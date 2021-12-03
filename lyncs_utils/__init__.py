@@ -2,7 +2,7 @@
 
 __version__ = "0.3.0"
 
-from .factors import *
+from .math import *
 from .logical import *
 from .class_utils import *
 from .extensions import *
