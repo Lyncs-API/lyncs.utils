@@ -1,5 +1,17 @@
 from pytest import raises
-from lyncs_utils import compact_indexes
+from lyncs_utils import first, last, compact_indexes
+
+
+def test_first():
+    assert first({1: 1, 2: 2}) == 1
+    assert first([1, 2]) == 1
+    assert first((1, 2)) == 1
+
+
+def test_last():
+    assert last({1: 1, 2: 2}) == 2
+    assert last([1, 2]) == 2
+    assert last((1, 2)) == 2
 
 
 def test_example():
