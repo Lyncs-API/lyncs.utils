@@ -1,4 +1,10 @@
-from lyncs_utils import prime_factors, factors, prod
+from lyncs_utils import prime_factors, factors, prod, sign
+
+
+def test_sign():
+    assert sign(2) == 1
+    assert sign(0) == 1
+    assert sign(-2) == -1
 
 
 def test_factors():

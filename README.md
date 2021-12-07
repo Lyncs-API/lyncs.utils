@@ -5,7 +5,7 @@
 [![license](https://img.shields.io/github/license/Lyncs-API/lyncs.utils?logo=github&logoColor=white)](https://github.com/Lyncs-API/lyncs.utils/blob/master/LICENSE)
 [![build & test](https://img.shields.io/github/workflow/status/Lyncs-API/lyncs.utils/build%20&%20test?logo=github&logoColor=white)](https://github.com/Lyncs-API/lyncs.utils/actions)
 [![codecov](https://img.shields.io/codecov/c/github/Lyncs-API/lyncs.utils?logo=codecov&logoColor=white)](https://codecov.io/gh/Lyncs-API/lyncs.utils)
-[![pylint](https://img.shields.io/badge/pylint%20score-9.7%2F10-green?logo=python&logoColor=white)](http://pylint.pycqa.org/)
+[![pylint](https://img.shields.io/badge/pylint%20score-9.6%2F10-green?logo=python&logoColor=white)](http://pylint.pycqa.org/)
 [![black](https://img.shields.io/badge/code%20style-black-000000.svg?logo=codefactor&logoColor=white)](https://github.com/ambv/black)
 
 This package provides a collection of generic-purpose and stand-alone functions that are of common use.
@@ -53,11 +53,12 @@ Extensions of Python standard functions. See `lyncs_utils.extensions`.
 - `commonsuffix(words)`: Finds common suffix in words
 - `@raiseif(fail, error)`: Decorator that raises `error` if `fail` is `True`
 
-### Factors
+### Math
 
-Factorization utils. See `lyncs_utils.factors`.
+Math utils. See `lyncs_utils.math`.
 
 - `prod(arr)`:  Enables math.prod for all versions of Python
+- `sign(n)`:  Sign of a number
 - `factors(n)`: Returns the list of factors of n
 - `prime_factors(n)`: Returns the list of prime factors of n
 
@@ -72,6 +73,14 @@ Tools for functions. See `lyncs_utils.functools`.
 - `apply_annotations(fnc, *args, **kwargs)`: Applies the annotations of fnc to the respective *args, **kwargs
 - `select_kwargs(fnc, *args, **kwargs)`: Calls fnc passing *args and ONLY the applicable **kwargs
 - `@spy`: Decorator that will log debug information when the function is called
+
+### Context Managers
+
+Functionalities using `contextmanager` by `contextlib` meant to be called within a with-statement.
+See `lyncs_utils.contextlib`.
+
+- `setting(obj, attr, value, default=None)`: Context manager that temporaly sets an attribute of an object.
+- `updating(obj, attr, value, default=None)`: Context manager that temporaly sets an item of an object.
 
 ### I/O
 
@@ -100,3 +109,11 @@ Functions returning or manipulating Numpy arrays (available with `lyncs[numpy]`)
 
 - `outer(A,B)`: outer product, alias of `numpy.kron`.
 - `gamma_matrices(dim, euclidean=True)`: returns n-dimensional gamma matrices
+
+### Indexes
+
+Functions for manipulating indexes
+
+- `first(it)`: first element of an iterable
+- `last(it)`: last element of an iterable
+- `compact_indexes(ids)`: compats list of integers into ranges where possible
