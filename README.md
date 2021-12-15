@@ -46,6 +46,7 @@ Extensions of Python standard functions. See `lyncs_utils.extensions`.
 
 - `count`: See itertools.count. Adds __call__ method
 - `redirect_stdout`: See contextlib.redirect_stdout. Now, it redirects stdout also from C
+- `keydefaultdict`: A defaultdict that passes the key to the factory
 - `FreezableDict`: Extension of dict. A dictionary that can be frozen at any moment.
 - `cache`: Enables functools.cache for all versions of Python
 - `lazy_import(module)`: Lazy import for modules

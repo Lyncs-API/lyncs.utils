@@ -92,6 +92,13 @@ def test_redirect_stdout():
     assert "this is from echo" in output
 
 
+def test_keydefaultdict():
+    foo = keydefaultdict(lambda key: key * 3)
+    assert foo[0] == 0
+    assert foo[3] == 9
+    assert foo["a"] == "aaa"
+
+
 def test_freezable_dict():
     assert isinstance(FreezableDict(), dict)
 
