@@ -155,8 +155,7 @@ class keydefaultdict(defaultdict):
     "A defaultdict that passes the key to the factory as argument"
 
     def __missing__(self, key):
-        fnc = self.default_factory
-        with setting(self, "default_factory", lambda: fnc(key)):
+        with setting(self, "default_factory", lambda: fnc(key)) as fnc:
             return super().__missing__(key)
 
 
