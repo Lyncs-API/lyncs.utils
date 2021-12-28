@@ -4,11 +4,15 @@ A collection of factorization utils
 
 __all__ = [
     "prod",
-    "factors",
     "sign",
+    "isclose",
+    "allclose",
+    "factors",
     "prime_factors",
 ]
 
+import math
+import warnings
 from functools import reduce
 
 try:
@@ -25,6 +29,24 @@ def sign(num):
     if num < 0:
         return -1
     return +1
+
+
+def isclose(left, right, warn_tol=0.01, **kwargs):
+    """
+    If warn_tol is not None and the relative tolerance is larger than rel_tol (default 1e-9)
+    but smaller than warn_tol (default 1%), then True is returned and a warning is raised
+    """
+    if math.isclose(left, right, **kwargs):
+        return True
+    if warn_tol is not None and math.isclose(left, right, rel_tol=warn_tol):
+        warnings.warn("accepting {left} close to {right}")
+        return True
+    return False
+
+
+def allclose(left, right, **kwargs):
+    "Same as isclose but for iterable objects"
+    return all((isclose(*pair, **kwargs) for pair in zip(left, right)))
 
 
 def factors(num):
