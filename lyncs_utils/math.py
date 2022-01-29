@@ -6,7 +6,6 @@ __all__ = [
     "prod",
     "sign",
     "isclose",
-    "allclose",
     "factors",
     "prime_factors",
 ]
