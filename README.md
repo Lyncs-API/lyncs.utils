@@ -111,10 +111,11 @@ Functions returning or manipulating Numpy arrays (available with `lyncs[numpy]`)
 - `outer(A,B)`: outer product, alias of `numpy.kron`.
 - `gamma_matrices(dim, euclidean=True)`: returns n-dimensional gamma matrices
 
-### Indexes
+### Itertools
 
-Functions for manipulating indexes
+Functions for iterable objects
 
 - `first(it)`: first element of an iterable
 - `last(it)`: last element of an iterable
+- `indexes(it,val)`: indexes of occurances of a value in an iterable
 - `compact_indexes(ids)`: compats list of integers into ranges where possible
