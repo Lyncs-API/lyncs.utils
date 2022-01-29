@@ -44,11 +44,6 @@ def isclose(left, right, warn_tol=None, **kwargs):
     return False
 
 
-def allclose(left, right, **kwargs):
-    "Same as isclose but for iterable objects"
-    return all((isclose(*pair, **kwargs) for pair in zip(left, right)))
-
-
 def factors(num):
     "Returns the list of factors of n"
     assert isinstance(num, int), "Num must be int"
