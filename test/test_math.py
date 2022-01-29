@@ -1,5 +1,5 @@
 from pytest import warns
-from lyncs_utils import isclose, allclose, prime_factors, factors, prod, sign
+from lyncs_utils import isclose, prime_factors, factors, prod, sign
 
 
 def test_isclose():
