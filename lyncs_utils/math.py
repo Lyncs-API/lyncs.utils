@@ -31,15 +31,15 @@ def sign(num):
     return +1
 
 
-def isclose(left, right, warn_tol=0.01, **kwargs):
+def isclose(left, right, warn_tol=None, **kwargs):
     """
     If warn_tol is not None and the relative tolerance is larger than rel_tol (default 1e-9)
     but smaller than warn_tol (default 1%), then True is returned and a warning is raised
     """
     if math.isclose(left, right, **kwargs):
         return True
-    if warn_tol is not None and math.isclose(left, right, rel_tol=warn_tol):
-        warnings.warn("accepting {left} close to {right}")
+    if warn_tol not in [None, 0] and math.isclose(left, right, rel_tol=warn_tol):
+        warnings.warn(f"accepting {left} close to {right}")
         return True
     return False
 
