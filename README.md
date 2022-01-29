@@ -5,7 +5,7 @@
 [![license](https://img.shields.io/github/license/Lyncs-API/lyncs.utils?logo=github&logoColor=white)](https://github.com/Lyncs-API/lyncs.utils/blob/master/LICENSE)
 [![build & test](https://img.shields.io/github/workflow/status/Lyncs-API/lyncs.utils/build%20&%20test?logo=github&logoColor=white)](https://github.com/Lyncs-API/lyncs.utils/actions)
 [![codecov](https://img.shields.io/codecov/c/github/Lyncs-API/lyncs.utils?logo=codecov&logoColor=white)](https://codecov.io/gh/Lyncs-API/lyncs.utils)
-[![pylint](https://img.shields.io/badge/pylint%20score-9.6%2F10-green?logo=python&logoColor=white)](http://pylint.pycqa.org/)
+[![pylint](https://img.shields.io/badge/pylint%20score-9.5%2F10-green?logo=python&logoColor=white)](http://pylint.pycqa.org/)
 [![black](https://img.shields.io/badge/code%20style-black-000000.svg?logo=codefactor&logoColor=white)](https://github.com/ambv/black)
 
 This package provides a collection of generic-purpose and stand-alone functions that are of common use.
@@ -46,6 +46,7 @@ Extensions of Python standard functions. See `lyncs_utils.extensions`.
 
 - `count`: See itertools.count. Adds __call__ method
 - `redirect_stdout`: See contextlib.redirect_stdout. Now, it redirects stdout also from C
+- `keydefaultdict`: A defaultdict that passes the key to the factory
 - `FreezableDict`: Extension of dict. A dictionary that can be frozen at any moment.
 - `cache`: Enables functools.cache for all versions of Python
 - `lazy_import(module)`: Lazy import for modules
@@ -59,6 +60,7 @@ Math utils. See `lyncs_utils.math`.
 
 - `prod(arr)`:  Enables math.prod for all versions of Python
 - `sign(n)`:  Sign of a number
+- `isclose(a,b,warn_tol=None,**)`: isclose with a warning tol
 - `factors(n)`: Returns the list of factors of n
 - `prime_factors(n)`: Returns the list of prime factors of n
 
@@ -110,10 +112,11 @@ Functions returning or manipulating Numpy arrays (available with `lyncs[numpy]`)
 - `outer(A,B)`: outer product, alias of `numpy.kron`.
 - `gamma_matrices(dim, euclidean=True)`: returns n-dimensional gamma matrices
 
-### Indexes
+### Itertools
 
-Functions for manipulating indexes
+Functions for iterable objects
 
 - `first(it)`: first element of an iterable
 - `last(it)`: last element of an iterable
+- `indexes(it,val)`: indexes of occurances of a value in an iterable
 - `compact_indexes(ids)`: compats list of integers into ranges where possible

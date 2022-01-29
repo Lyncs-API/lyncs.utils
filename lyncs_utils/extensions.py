@@ -6,6 +6,7 @@ Extensions of Python standard functions
 __all__ = [
     "count",
     "redirect_stdout",
+    "keydefaultdict",
     "FreezableDict",
     "cache",
     "lazy_import",
@@ -20,10 +21,12 @@ import sys
 import ctypes
 import tempfile
 import importlib
+from collections import defaultdict
 from functools import wraps
 from itertools import count as _count
 from contextlib import redirect_stdout as _redirect_stdout
 from os.path import commonprefix
+from .contextlib import setting
 
 try:
     from functools import cache
@@ -146,6 +149,14 @@ class redirect_stdout(_redirect_stdout):
         os.dup2(fno, 1)
         os.close(fno)
         super().__exit__(exctype, excinst, exctb)
+
+
+class keydefaultdict(defaultdict):
+    "A defaultdict that passes the key to the factory as argument"
+
+    def __missing__(self, key):
+        with setting(self, "default_factory", lambda: fnc(key)) as fnc:
+            return super().__missing__(key)
 
 
 class FreezableDict(dict):

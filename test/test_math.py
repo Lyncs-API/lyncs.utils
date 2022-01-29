@@ -1,4 +1,12 @@
-from lyncs_utils import prime_factors, factors, prod, sign
+from pytest import warns
+from lyncs_utils import isclose, prime_factors, factors, prod, sign
+
+
+def test_isclose():
+    assert isclose(1, 1.00001, abs_tol=0.0001)
+    assert not isclose(1, 1.00011, abs_tol=0.0001)
+    with warns(None):
+        assert isclose(1, 1.01, warn_tol=0.1)
 
 
 def test_sign():

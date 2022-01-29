@@ -1,10 +1,11 @@
 """
-Utils for indexes
+Utils for iterables
 """
 
 __all__ = [
     "first",
     "last",
+    "indexes",
     "compact_indexes",
 ]
 
@@ -19,6 +20,18 @@ def first(iterable):
 def last(iterable):
     "Returns the last element of iterable"
     return next(reversed(iterable))
+
+
+def indexes(iterable, val):
+    "Returns all indexes of an occurrance"
+    start = 0
+    while True:
+        try:
+            index = iterable.index(val, start)
+            yield index
+            start = index + 1
+        except ValueError:
+            return
 
 
 def compact_indexes(indexes):

@@ -1,5 +1,5 @@
 from pytest import raises
-from lyncs_utils import first, last, compact_indexes
+from lyncs_utils import first, last, indexes, compact_indexes
 
 
 def test_first():
@@ -12,6 +12,12 @@ def test_last():
     # assert last({1: 1, 2: 2}) == 2
     assert last([1, 2]) == 2
     assert last((1, 2)) == 2
+
+
+def test_indexes():
+    assert tuple(indexes((1, 2, 3), 4)) == ()
+    assert tuple(indexes((1, 2, 3), 1)) == (0,)
+    assert tuple(indexes((1, 2, 1, 1), 1)) == (0, 2, 3)
 
 
 def test_example():
