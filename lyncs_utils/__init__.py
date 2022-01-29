@@ -6,7 +6,7 @@ from .math import *
 from .logical import *
 from .class_utils import *
 from .extensions import *
-from .indexes import *
+from .itertools import *
 from .functools import *
 from .contextlib import *
 from .numpy import *
