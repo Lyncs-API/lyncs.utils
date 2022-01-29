@@ -60,6 +60,7 @@ Math utils. See `lyncs_utils.math`.
 
 - `prod(arr)`:  Enables math.prod for all versions of Python
 - `sign(n)`:  Sign of a number
+- `isclose(a,b,warn_tol=None,**)`: isclose with a warning tol
 - `factors(n)`: Returns the list of factors of n
 - `prime_factors(n)`: Returns the list of prime factors of n
 
