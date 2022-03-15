@@ -1,6 +1,8 @@
+import pytest
 import tempfile
 from pathlib import Path
 from lyncs_utils.io import *
+from lyncs_utils import first
 
 
 def test_read():
@@ -75,3 +77,30 @@ def test_to_path():
         assert to_path(fp) == Path(filename)
         assert to_path(filename) == Path(filename)
         assert to_path(bytes(filename, "utf-8")) == Path(filename)
+
+
+def test_dbdict():
+    with tempfile.NamedTemporaryFile() as fp:
+        filename = fp.name
+        tmp = dbdict(filename=filename)
+
+        tmp["foo"] = "bar"
+        assert "foo" in tmp
+        assert tmp["foo"] == "bar"
+        assert "bar" not in tmp
+        assert len(tmp) == 1
+        assert first(tmp) == "foo"
+
+        tmp["foo"] = "bar2"
+        assert tmp["foo"] == "bar2"
+
+        tmp2 = dbdict({"bar": "foo"}, filename=filename)
+        assert "foo" in tmp2
+        assert "bar" in tmp
+
+        del tmp["foo"]
+        assert "foo" not in tmp
+        assert "foo" not in tmp2
+
+        with pytest.raises(KeyError):
+            del tmp["foo"]
