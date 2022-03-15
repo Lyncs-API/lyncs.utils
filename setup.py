@@ -4,7 +4,6 @@ setup(
     "lyncs_utils",
     extras_require={
         "numpy": ["numpy"],
-        "dbdict": ["sqlite"],
         "test": ["pytest", "pytest-cov", "ipython", "numpy", "lyncs_setuptools"],
     },
 )
