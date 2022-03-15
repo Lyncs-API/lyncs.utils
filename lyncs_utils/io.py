@@ -23,11 +23,7 @@ from io import IOBase
 from pathlib import Path
 from tempfile import _TemporaryFileWrapper
 from collections.abc import MutableMapping
-
-try:
-    from sqlite3 import dbapi2 as sqlite
-except ImportError as err:
-    sqlite = err
+from sqlite3 import dbapi2 as sqlite
 
 
 FileLike = (
@@ -127,10 +123,6 @@ class dbdict(MutableMapping):
         - loads: serializer for loading, e.g. pickle.loads
         - dumps: serializer for dumping, e.g. pickle.dumps
         """
-
-        if isinstance(sqlite, ImportError):
-            print("sqlite3 not installed. Please install lyncs_utils[dbdict]")
-            raise sqlite
 
         self.db_filename = dictName
         self.dumps = dumps

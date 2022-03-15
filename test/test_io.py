@@ -81,10 +81,7 @@ def test_to_path():
 def test_dbdict():
     with tempfile.NamedTemporaryFile() as fp:
         filename = fp.name
-        try:
-            tmp = dbdict(filename)
-        except ImportError:
-            pytest.skip("No sqlite")
+        tmp = dbdict(filename)
 
         tmp["foo"] = "bar"
         assert "foo" in tmp
