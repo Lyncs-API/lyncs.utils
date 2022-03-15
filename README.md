@@ -94,7 +94,8 @@ Tools for I/O. See `lyncs_utils.io`.
 - `read_struct(fname/fp, format)`: Reads a structure from file
 - `write_struct(fname/fp, format, *data)`: Writes a structure from file
 - `file_size(fname/fp)`: Returns the file size
-- `to_path(fname/fp)`: Reaturns a Path object to the file
+- `to_path(fname/fp)`: Returns a Path object to the file
+- `dbdict`: Dictionary-like class for storing dictionaries in a database
 
 ### Logical
 

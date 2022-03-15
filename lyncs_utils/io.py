@@ -11,8 +11,10 @@ __all__ = [
     "write_struct",
     "file_size",
     "to_path",
+    "dbdict",
 ]
 
+import pickle
 import os
 import struct
 from contextlib import contextmanager
@@ -20,6 +22,9 @@ from functools import wraps, partial
 from io import IOBase
 from pathlib import Path
 from tempfile import _TemporaryFileWrapper
+from collections.abc import MutableMapping
+from sqlite3 import dbapi2 as sqlite
+
 
 FileLike = (
     IOBase,
@@ -103,3 +108,59 @@ def to_path(filename):
     if isinstance(filename, bytes):
         filename = filename.decode()
     return Path(filename)
+
+
+class dbdict(MutableMapping):
+    """A dictionary-like class for storing dictionaries in a database"""
+
+    def __init__(self, dictName, loads=pickle.loads, dumps=pickle.dumps):
+        """
+        A dictionary-like class for storing dictionaries in a database
+
+        Parameters
+        ----------
+        - dictName: dictonary name / filepath used for the filename
+        - loads: serializer for loading, e.g. pickle.loads
+        - dumps: serializer for dumping, e.g. pickle.dumps
+        """
+
+        self.db_filename = dictName
+        self.dumps = dumps
+        self.loads = loads
+        if not dictName.endswith(".sqlite"):
+            self.db_filename += ".sqlite"
+
+        if not os.path.isfile(self.db_filename):
+            self.con = sqlite.connect(self.db_filename)
+            self.con.execute("create table data (key PRIMARY KEY,value)")
+        else:
+            self.con = sqlite.connect(self.db_filename)
+
+    def __getitem__(self, key):
+        row = self.con.execute("select value from data where key=?", (key,)).fetchone()
+        if not row:
+            raise KeyError
+        return self.loads(row[0])
+
+    def __setitem__(self, key, item):
+        item = self.dumps(item)
+        if self.con.execute("select key from data where key=?", (key,)).fetchone():
+            self.con.execute("update data set value=? where key=?", (item, key))
+        else:
+            self.con.execute("insert into data (key,value) values (?,?)", (key, item))
+        self.con.commit()
+
+    def __delitem__(self, key):
+        if self.con.execute("select key from data where key=?", (key,)).fetchone():
+            self.con.execute("delete from data where key=?", (key,))
+            self.con.commit()
+        else:
+            raise KeyError
+
+    def __iter__(self):
+        # TODO use iterable fetch
+        return (row[0] for row in self.con.execute("select key from data").fetchall())
+
+    def __len__(self):
+        # TODO find cheaper way
+        return len(self.con.execute("select key from data").fetchall())

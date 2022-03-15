@@ -1,3 +1,4 @@
+import pytest
 import tempfile
 from pathlib import Path
 from lyncs_utils.io import *
@@ -75,3 +76,14 @@ def test_to_path():
         assert to_path(fp) == Path(filename)
         assert to_path(filename) == Path(filename)
         assert to_path(bytes(filename, "utf-8")) == Path(filename)
+
+
+def test_dbdict():
+    with tempfile.NamedTemporaryFile() as fp:
+        filename = fp.name
+        tmp = dbdict(filename)
+
+        tmp["foo"] = "bar"
+        assert "foo" in tmp
+        assert tmp["foo"] == "bar"
+        assert "bar" not in tmp

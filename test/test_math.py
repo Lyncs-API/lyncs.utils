@@ -20,4 +20,4 @@ def test_factors():
     for num in nums:
         assert prod(prime_factors(num)) == num
         assert prod(factors(num)) % num == 0
-        assert prod(prime_factors(num ** 2)) == num ** 2
+        assert prod(prime_factors(num**2)) == num**2
