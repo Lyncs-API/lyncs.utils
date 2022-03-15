@@ -82,7 +82,7 @@ def test_to_path():
 def test_dbdict():
     with tempfile.NamedTemporaryFile() as fp:
         filename = fp.name
-        tmp = dbdict(filename)
+        tmp = dbdict(filename=filename)
 
         tmp["foo"] = "bar"
         assert "foo" in tmp
@@ -94,8 +94,9 @@ def test_dbdict():
         tmp["foo"] = "bar2"
         assert tmp["foo"] == "bar2"
 
-        tmp2 = dbdict(filename)
+        tmp2 = dbdict({"bar": "foo"}, filename=filename)
         assert "foo" in tmp2
+        assert "bar" in tmp
 
         del tmp["foo"]
         assert "foo" not in tmp

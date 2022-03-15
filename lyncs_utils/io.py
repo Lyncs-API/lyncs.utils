@@ -113,28 +113,31 @@ def to_path(filename):
 class dbdict(MutableMapping):
     """A dictionary-like class for storing dictionaries in a database"""
 
-    def __init__(self, dictName, loads=pickle.loads, dumps=pickle.dumps):
+    def __init__(self, *args, filename="", loads=pickle.loads, dumps=pickle.dumps):
         """
         A dictionary-like class for storing dictionaries in a database
 
         Parameters
         ----------
-        - dictName: dictonary name / filepath used for the filename
-        - loads: serializer for loading, e.g. pickle.loads
-        - dumps: serializer for dumping, e.g. pickle.dumps
+        - filename: filename for storing the database,cdefault `.sqlite`
+        - loads: serializer for loading, default `pickle.loads`
+        - dumps: serializer for dumping, default `pickle.dumps`
         """
 
-        self.db_filename = dictName
+        self.filename = filename
         self.dumps = dumps
         self.loads = loads
-        if not dictName.endswith(".sqlite"):
-            self.db_filename += ".sqlite"
+        if not self.filename.endswith(".sqlite"):
+            self.filename += ".sqlite"
 
-        if not os.path.isfile(self.db_filename):
-            self.con = sqlite.connect(self.db_filename)
+        if not os.path.isfile(self.filename):
+            self.con = sqlite.connect(self.filename)
             self.con.execute("create table data (key PRIMARY KEY,value)")
         else:
-            self.con = sqlite.connect(self.db_filename)
+            self.con = sqlite.connect(self.filename)
+
+        if args:
+            self.update(*args)
 
     def __getitem__(self, key):
         row = self.con.execute("select value from data where key=?", (key,)).fetchone()
@@ -155,7 +158,7 @@ class dbdict(MutableMapping):
             self.con.execute("delete from data where key=?", (key,))
             self.con.commit()
         else:
-            raise KeyError
+            raise KeyError(f"{key} not in dictonary")
 
     def __iter__(self):
         # TODO use iterable fetch
