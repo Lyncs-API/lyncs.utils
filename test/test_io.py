@@ -2,6 +2,7 @@ import pytest
 import tempfile
 from pathlib import Path
 from lyncs_utils.io import *
+from lyncs_utils import first
 
 
 def test_read():
@@ -87,3 +88,18 @@ def test_dbdict():
         assert "foo" in tmp
         assert tmp["foo"] == "bar"
         assert "bar" not in tmp
+        assert len(tmp) == 1
+        assert first(tmp) == "foo"
+
+        tmp["foo"] = "bar2"
+        assert tmp["foo"] == "bar2"
+
+        tmp2 = dbdict(filename)
+        assert "foo" in tmp2
+
+        del tmp["foo"]
+        assert "foo" not in tmp
+        assert "foo" not in tmp2
+
+        with pytest.raises(KeyError):
+            del tmp["foo"]
