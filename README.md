@@ -53,6 +53,7 @@ Extensions of Python standard functions. See `lyncs_utils.extensions`.
 - `setitems(arr, vals)`: Sets items of an iterable object
 - `commonsuffix(words)`: Finds common suffix in words
 - `@raiseif(fail, error)`: Decorator that raises `error` if `fail` is `True`
+- `RaiseOnUse(error)`: Class instance that raises `error` when used
 
 ### Math
 

@@ -60,6 +60,25 @@ def test_raiseif():
         fnc()
 
 
+def test_raiseonuse():
+    foo = RaiseOnUse(RuntimeError())
+
+    with raises(RuntimeError):
+        foo()
+
+    with raises(RuntimeError):
+        foo.bar
+
+    with raises(RuntimeError):
+        foo.bar = None
+
+    with raises(RuntimeError):
+        foo["bar"]
+
+    with raises(RuntimeError):
+        foo["bar"] = None
+
+
 def test_redirect_stdout():
     libc = ctypes.CDLL(None)
 

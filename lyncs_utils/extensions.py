@@ -13,6 +13,7 @@ __all__ = [
     "setitems",
     "commonsuffix",
     "raiseif",
+    "RaiseOnUse",
 ]
 
 import io
@@ -98,6 +99,23 @@ def raiseif(fail, error):
         return raiser
 
     return decorator
+
+
+class RaiseOnUse:
+    "Class that raises error if instances are used"
+    __slots__ = ("__error__",)
+
+    def __init__(self, error):
+        super().__setattr__("__error__", error)
+
+    def _(self, *__, **___):
+        raise self.__error__
+
+    __call__ = _
+    __getattr__ = _
+    __setattr__ = _
+    __getitem__ = _
+    __setitem__ = _
 
 
 class redirect_stdout(_redirect_stdout):
