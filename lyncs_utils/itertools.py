@@ -6,6 +6,8 @@ __all__ = [
     "first",
     "last",
     "indexes",
+    "dictmap",
+    "dictzip",
     "compact_indexes",
 ]
 
@@ -32,6 +34,27 @@ def indexes(iterable, val):
             start = index + 1
         except ValueError:
             return
+
+
+def dictmap(fnc, dct):
+    "Map for dictionaries"
+    for key, val in dict.items(dct):
+        yield key, fnc(val)
+
+
+def dictzip(*dicts, fill=True, default=None):
+    """
+    Zip for dictionaries.
+    Missing keys are optionally filled with a given default value, otherwise ignored.
+    """
+
+    if fill:
+        keys = set.union(*map(set, dicts))
+    else:
+        keys = set.intersection(*map(set, dicts))
+
+    for key in keys:
+        yield key, tuple(map(lambda _: _.get(key, default), dicts))
 
 
 def compact_indexes(indexes):
