@@ -121,4 +121,6 @@ Functions for iterable objects
 - `first(it)`: first element of an iterable
 - `last(it)`: last element of an iterable
 - `indexes(it,val)`: indexes of occurances of a value in an iterable
+- `dictmap(fnc, dict)`: map for dictionaries
+- `dictzip(*dicts, fill=True, default=None)`: zip for dictionaries
 - `compact_indexes(ids)`: compats list of integers into ranges where possible
