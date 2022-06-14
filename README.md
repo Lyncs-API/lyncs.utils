@@ -124,4 +124,5 @@ Functions for iterable objects
 - `indexes(it,val)`: indexes of occurances of a value in an iterable
 - `dictmap(fnc, dict)`: map for dictionaries
 - `dictzip(*dicts, fill=True, default=None)`: zip for dictionaries
+- `flat_dict(dict, sep="/", base="")`: flat nested dictionaries into a single dict
 - `compact_indexes(ids)`: compats list of integers into ranges where possible
