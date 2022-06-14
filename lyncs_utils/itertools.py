@@ -8,10 +8,12 @@ __all__ = [
     "indexes",
     "dictmap",
     "dictzip",
+    "flat_dict",
     "compact_indexes",
 ]
 
 from .logical import isiterable
+from collections.abc import Mapping
 
 
 def first(iterable):
@@ -57,6 +59,17 @@ def dictzip(*dicts, fill=True, default=None):
         yield key, tuple(map(lambda _: _.get(key, default), dicts))
 
 
+def flat_dict(dct, sep="/", base=None):
+    "Flats a nested dictionary into a single dictionary with key separated by given `sep`"
+    for key, val in dict.items(dct):
+        if base:
+            key = f"{base}{sep}{key}"
+        if isinstance(val, Mapping):
+            yield from flat_dict(val, sep=sep, base=key)
+        else:
+            yield key, val
+
+
 def compact_indexes(indexes):
     """
     Returns a list of ranges or integers
@@ -90,9 +103,7 @@ def compact_indexes(indexes):
                     tmp[1] = idx
                 else:
                     yield range(tmp[0], tmp[1] + (1 if step > 0 else -1), step)
-                    tmp = [
-                        idx,
-                    ]
+                    tmp = [idx]
                     step = 0
     if step == 0:
         yield from tmp

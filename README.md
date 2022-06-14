@@ -5,7 +5,7 @@
 [![license](https://img.shields.io/github/license/Lyncs-API/lyncs.utils?logo=github&logoColor=white)](https://github.com/Lyncs-API/lyncs.utils/blob/master/LICENSE)
 [![build & test](https://img.shields.io/github/workflow/status/Lyncs-API/lyncs.utils/build%20&%20test?logo=github&logoColor=white)](https://github.com/Lyncs-API/lyncs.utils/actions)
 [![codecov](https://img.shields.io/codecov/c/github/Lyncs-API/lyncs.utils?logo=codecov&logoColor=white)](https://codecov.io/gh/Lyncs-API/lyncs.utils)
-[![pylint](https://img.shields.io/badge/pylint%20score-9.5%2F10-green?logo=python&logoColor=white)](http://pylint.pycqa.org/)
+[![pylint](https://img.shields.io/badge/pylint%20score-9.4%2F10-green?logo=python&logoColor=white)](http://pylint.pycqa.org/)
 [![black](https://img.shields.io/badge/code%20style-black-000000.svg?logo=codefactor&logoColor=white)](https://github.com/ambv/black)
 
 This package provides a collection of generic-purpose and stand-alone functions that are of common use.
@@ -39,6 +39,7 @@ Functions and decorator for classes. See `lyncs_utils.class_utils`.
 - `@class_property`: Decorator for a class property (like classmethod)
 - `call_method(obj, fnc, *args, **kwargs)`: Calls a method of the obj.
 - `default_repr_pretty`: Default method to use for _repr_pretty_
+- `default(value, type=None, doc=None)`: Attribute with default value and optional type checking
 
 ### Extensions
 
@@ -123,4 +124,5 @@ Functions for iterable objects
 - `indexes(it,val)`: indexes of occurances of a value in an iterable
 - `dictmap(fnc, dict)`: map for dictionaries
 - `dictzip(*dicts, fill=True, default=None)`: zip for dictionaries
+- `flat_dict(dict, sep="/", base="")`: flat nested dictionaries into a single dict
 - `compact_indexes(ids)`: compats list of integers into ranges where possible

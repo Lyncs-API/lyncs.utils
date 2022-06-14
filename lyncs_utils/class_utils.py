@@ -13,6 +13,7 @@ __all__ = [
     "class_property",
     "classproperty",
     "call_method",
+    "default",
 ]
 
 from types import MethodType
@@ -240,6 +241,41 @@ class class_property:
 
 
 classproperty = class_property
+
+
+class default:
+    "Simple attribute with default value and optional type checking"
+
+    def __init__(self, value, type=None, doc=None):
+        self.value = value
+        self.type = type
+        self.__doc__ = doc
+        self._key = None
+
+    def var_key(self, cls):
+        "Looks for the variable name inside obj"
+        if self._key is not None:
+            return self._key
+        key = "_key_not_found"
+        for _k in dir(cls):
+            if getattr(cls, _k) is self:
+                key = _k
+                break
+        while hasattr(cls, key):
+            key = "_" + key
+        self._key = key
+        return key
+
+    def __get__(self, obj, cls=None):
+        if obj is None:
+            return self
+        return getattr(obj, self.var_key(cls), self.value)
+
+    def __set__(self, obj, value):
+        if self.type is not None:
+            if not isinstance(value, self.type):
+                raise TypeError(f"Expected {self.type} but got {type(value)}")
+        setattr(obj, self.var_key(type(obj)), value)
 
 
 def call_method(self, method, *args, **kwargs):

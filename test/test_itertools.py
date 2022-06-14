@@ -1,5 +1,13 @@
 from pytest import raises
-from lyncs_utils import first, last, indexes, dictzip, dictmap, compact_indexes
+from lyncs_utils import (
+    first,
+    last,
+    indexes,
+    dictzip,
+    dictmap,
+    flat_dict,
+    compact_indexes,
+)
 
 
 def test_first():
@@ -31,6 +39,17 @@ def test_dictzip():
     assert dict(dictzip(dict1)) == dict(dictmap(lambda _: (_,), dict1))
     assert dict(dictzip(dict1, dict2)) == dict(a=(1, "a"), b=(2, "b"), c=(3, None))
     assert dict(dictzip(dict1, dict2, fill=False)) == dict(a=(1, "a"), b=(2, "b"))
+
+
+def test_dictzip():
+    dict1 = dict(a=dict(b=dict(c="d")))
+    dict2 = dict(flat_dict(dict1))
+    assert tuple(dict2) == ("a/b/c",)
+    assert dict2["a/b/c"] == "d"
+
+    dict2 = dict(flat_dict(dict1, sep=" ", base="foo"))
+    assert tuple(dict2) == ("foo a b c",)
+    assert dict2["foo a b c"] == "d"
 
 
 def test_example():
