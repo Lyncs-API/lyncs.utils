@@ -39,6 +39,7 @@ Functions and decorator for classes. See `lyncs_utils.class_utils`.
 - `@class_property`: Decorator for a class property (like classmethod)
 - `call_method(obj, fnc, *args, **kwargs)`: Calls a method of the obj.
 - `default_repr_pretty`: Default method to use for _repr_pretty_
+- `default(value, type=None, doc=None)`: Attribute with default value and optional type checking
 
 ### Extensions
 

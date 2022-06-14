@@ -6,6 +6,7 @@ from lyncs_utils import (
     add_kwargs_of,
     add_to,
     call_method,
+    default,
 )
 from random import random
 import pytest
@@ -25,6 +26,7 @@ class Foo:
         self.bar = bar
 
     _repr_pretty_ = default_repr_pretty
+    option = default(False, type=bool)
 
     @static_property
     def pi():
@@ -107,10 +109,22 @@ def test_static_property():
     assert Foo.pi == 3.14
 
 
-def test_static_property():
+def test_class_property():
     foo = Foo(10)
     assert foo.type == Foo
     assert Foo.type == Foo
+
+
+def test_default():
+    foo = Foo(10)
+    assert foo.option == False
+    assert Foo.option._key == "_option"
+    foo.option = True
+    assert foo.option == True
+    with pytest.raises(TypeError):
+        foo.option = "foo"
+    foo = Foo(10)
+    assert foo.option == False
 
 
 def test_call_method():
