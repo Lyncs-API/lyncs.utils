@@ -11,6 +11,7 @@ __all__ = [
     "clickit",
 ]
 
+from collections.abc import Sequence
 from functools import partial, wraps
 from logging import debug
 import re
@@ -166,15 +167,49 @@ def clickit(func):
     varnames = get_varnames(func)
     nargs = len(varnames) - len(defaults)
 
-    to_opt = lambda var: "--" + var.replace("_", "-")
-    get_help = lambda var: ""  # TODO: find info in func.__doc__
+    def get_key(var):
+        "Returns a key for the variable"
+        var = var.replace("_", "-")
+        if annotations.get(var, None) == bool:
+            if var.startswith("with-"):
+                return f"--{var}/--without-{var[5:]}"
+            return f"--{var}/--no-{var}"
+        return f"--{var}"
+
+    def is_multiple(var):
+        "Multiple variables must be typed Sequence"
+        return getattr(annotations.get(var, None), "__origin__", None) is Sequence
+
+    def get_type(var):
+        "Returns the type of var"
+        if var not in annotations:
+            return None
+        tpe = annotations[var]
+        if is_multiple(var):
+            return getattr(tpe, "__args__", (None,))[0]
+        return tpe
+
+    doc = func.__doc__.split("\n")
+    # comments are all lines starting with "#"
+    comments = tuple(line.strip(" #") for line in doc if line.lstrip().startswith("#"))
+    doc = "\n".join(tuple(line for line in doc if not line.lstrip().startswith("#")))
+    func.__doc__ = doc
+
+    def get_help(var):
+        "Checking in __doc__ for lines that start with {var}:"
+        for line in comments:
+            if line.startswith(var + ":"):
+                return line[len(var) + 1 :].strip()
+        return ""
 
     for i, var in enumerate(varnames):
+        value = None if i < nargs else defaults[i - nargs]
         func = click.option(
-            to_opt(var),
+            get_key(var),
             required=i < nargs,
-            default=None if i < nargs else defaults[i - nargs],
-            type=annotations.get(var, None),
+            default=value,
+            multiple=is_multiple(var),
+            type=get_type(var),
             help=get_help(var),
         )(func)
 
