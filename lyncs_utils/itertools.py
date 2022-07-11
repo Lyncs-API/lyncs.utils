@@ -38,9 +38,17 @@ def indexes(iterable, val):
             return
 
 
+def items(dct):
+    "Calls items, if available, or dict.items"
+    try:
+        return dct.items()
+    except AttributeError:
+        return dict.items(dct)
+
+
 def dictmap(fnc, dct):
     "Map for dictionaries"
-    for key, val in dict.items(dct):
+    for key, val in items(dct):
         yield key, fnc(val)
 
 
@@ -61,7 +69,7 @@ def dictzip(*dicts, fill=True, default=None):
 
 def flat_dict(dct, sep="/", base=None):
     "Flats a nested dictionary into a single dictionary with key separated by given `sep`"
-    for key, val in dict.items(dct):
+    for key, val in items(dct):
         if base:
             key = f"{base}{sep}{key}"
         if isinstance(val, Mapping):
