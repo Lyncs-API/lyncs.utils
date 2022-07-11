@@ -8,12 +8,19 @@ __all__ = [
     "apply_annotations",
     "select_kwargs",
     "spy",
+    "clickit",
 ]
 
 from functools import partial, wraps
 from logging import debug
 import re
 import inspect
+from .extensions import raiseif
+
+try:
+    import click
+except ImportError:
+    click = None
 
 KEYWORD = re.compile("[A-Za-z_][A-Za-z0-9_]*")
 
@@ -146,3 +153,29 @@ def spy(fnc):
         return out
 
     return wrapper
+
+
+@raiseif(click == None, "Click package not available. Please install 'click'.")
+def clickit(func):
+    "Decorator that turns any function argument to click.option"
+    if has_args(func):
+        raise NotImplementedError("TODO: investigate how to treat `*args`")
+
+    annotations = getattr(func, "__annotations__", {})
+    defaults = getattr(func, "__defaults__", {})
+    varnames = get_varnames(func)
+    nargs = len(varnames) - len(defaults)
+
+    to_opt = lambda var: "--" + var.replace("_", "-")
+    get_help = lambda var: ""  # TODO: find info in func.__doc__
+
+    for i, var in enumerate(varnames):
+        func = click.option(
+            to_opt(var),
+            required=i < nargs,
+            default=None if i < nargs else defaults[i - nargs],
+            type=annotations.get(var, None),
+            help=get_help(var),
+        )(func)
+
+    return func

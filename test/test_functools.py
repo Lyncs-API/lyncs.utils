@@ -175,6 +175,27 @@ def test_select_kwargs():
     assert kwargs == dict(c=3, d=4)
 
 
+def test_clickit():
+    try:
+
+        @clickit
+        def foo(a, b, bar: int = 0):
+            pass
+
+    except ImportError:
+        pytest.skip("No click")
+
+    assert hasattr(foo, "__click_params__")
+    params = {param.name: param for param in foo.__click_params__}
+    assert "a" in params
+    assert "b" in params
+    assert "bar" in params
+
+    assert params["a"].required
+    assert params["b"].required
+    assert not params["bar"].required
+
+
 def test_spy():
     @spy
     def foo(bar=None):

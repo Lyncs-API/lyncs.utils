@@ -77,6 +77,7 @@ Tools for functions. See `lyncs_utils.functools`.
 - `apply_annotations(fnc, *args, **kwargs)`: Applies the annotations of fnc to the respective *args, **kwargs
 - `select_kwargs(fnc, *args, **kwargs)`: Calls fnc passing *args and ONLY the applicable **kwargs
 - `@spy`: Decorator that will log debug information when the function is called
+- `@clickit`: Decorator that adds click.option for any function argument
 
 ### Context Managers
 
