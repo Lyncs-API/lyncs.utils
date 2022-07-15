@@ -16,8 +16,9 @@ __all__ = [
     "compact_indexes",
 ]
 
-from .logical import isiterable
 from collections.abc import Mapping
+from .logical import isiterable
+from .math import isclose
 
 
 def first(iterable):
@@ -79,11 +80,11 @@ def dictzip(*dicts, fill=True, default=None, values_only=False):
     """
 
     if fill:
-        keys = set.union(*map(set, map(keys, dicts)))
+        all_keys = set.union(*map(set, map(keys, dicts)))
     else:
-        keys = set.intersection(*map(set, map(keys, dicts)))
+        all_keys = set.intersection(*map(set, map(keys, dicts)))
 
-    for key in keys:
+    for key in all_keys:
         values = tuple(map(lambda _: _.get(key, default), dicts))
         if values_only:
             yield values
@@ -100,6 +101,32 @@ def flat_dict(dct, sep="/", base=None):
             yield from flat_dict(val, sep=sep, base=key)
         else:
             yield key, val
+
+
+def allclose(left, right, **kwargs):
+    "Applies isclose to elements of iterable objects recursively"
+    if not isiterable(left, exclude_str=True) and not isiterable(
+        right, exclude_str=True
+    ):
+        return isclose(left, right, **kwargs)
+    if not isiterable(left):
+        left = [left] * len(right)
+    if not isiterable(right):
+        right = [right] * len(left)
+    if len(left) != len(right):
+        return False
+    if isinstance(left, Mapping) or isinstance(right, Mapping):
+        if not isinstance(left, Mapping):
+            pairs = zip(left, values(right))
+        elif not isinstance(right, Mapping):
+            pairs = zip(values(left), right)
+        else:
+            if set(keys(left)) != set(keys(right)):
+                return False
+            pairs = dictzip(left, right, values_only=True)
+    else:
+        pairs = zip(left, right)
+    return all((allclose(*pair, **kwargs) for pair in pairs))
 
 
 def compact_indexes(indexes):
