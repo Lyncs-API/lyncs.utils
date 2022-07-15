@@ -52,7 +52,7 @@ def dictmap(fnc, dct):
         yield key, fnc(val)
 
 
-def dictzip(*dicts, fill=True, default=None):
+def dictzip(*dicts, fill=True, default=None, values_only=False):
     """
     Zip for dictionaries.
     Missing keys are optionally filled with a given default value, otherwise ignored.
@@ -64,7 +64,11 @@ def dictzip(*dicts, fill=True, default=None):
         keys = set.intersection(*map(set, dicts))
 
     for key in keys:
-        yield key, tuple(map(lambda _: _.get(key, default), dicts))
+        values = tuple(map(lambda _: _.get(key, default), dicts))
+        if values_only:
+            yield values
+        else:
+            yield key, values
 
 
 def flat_dict(dct, sep="/", base=None):
