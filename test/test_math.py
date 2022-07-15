@@ -14,6 +14,7 @@ def test_isclose():
         assert isclose(1, 1.01, warn_tol=0.1)
     assert isclose(1j, 1.0001j, abs_tol=0.0001)
     assert not isclose(1j, 1.0002j, abs_tol=0.0001)
+    assert isclose("a", "a")
 
 
 def test_sign():
