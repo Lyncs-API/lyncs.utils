@@ -62,7 +62,8 @@ Math utils. See `lyncs_utils.math`.
 
 - `prod(arr)`:  Enables math.prod for all versions of Python
 - `sign(n)`:  Sign of a number
-- `isclose(a,b,warn_tol=None,**)`: isclose with a warning tol
+- `iscomplex(n)`: If n is complex
+- `isclose(a,b,warn_tol=None,**)`: math.isclose with support for complex and warning tol
 - `factors(n)`: Returns the list of factors of n
 - `prime_factors(n)`: Returns the list of prime factors of n
 
@@ -123,7 +124,11 @@ Functions for iterable objects
 - `first(it)`: first element of an iterable
 - `last(it)`: last element of an iterable
 - `indexes(it,val)`: indexes of occurances of a value in an iterable
+- `keys(dict)`: calls keys, if available, or dict.keys
+- `values(dict)`: calls values, if available, or dict.values
+- `items(dict)`: calls items, if available, or dict.items
 - `dictmap(fnc, dict)`: map for dictionaries
 - `dictzip(*dicts, fill=True, default=None)`: zip for dictionaries
 - `flat_dict(dict, sep="/", base="")`: flat nested dictionaries into a single dict
+- `allclose(left, right, **)`: applies isclose recursively to iterable objects
 - `compact_indexes(ids)`: compats list of integers into ranges where possible
