@@ -13,12 +13,10 @@ from .extensions import lazy_import, raiseif
 
 try:
     numpy = lazy_import("numpy")
-    _err = None
-except ImportError as err:
-    numpy = None
-    _err = err
+except ImportError as numpy:
+    pass
 
-requires_numpy = raiseif(numpy is None, _err)
+requires_numpy = raiseif(isinstance(numpy, Exception), numpy)
 
 
 @requires_numpy

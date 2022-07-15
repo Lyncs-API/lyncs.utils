@@ -20,8 +20,8 @@ from .extensions import raiseif
 
 try:
     import click
-except ImportError:
-    click = None
+except ImportError as click:
+    pass
 
 KEYWORD = re.compile("[A-Za-z_][A-Za-z0-9_]*")
 
@@ -156,7 +156,7 @@ def spy(fnc):
     return wrapper
 
 
-@raiseif(click == None, "Click package not available. Please install 'click'.")
+@raiseif(isinstance(click, Exception), click)
 def clickit(func):
     "Decorator that turns any function argument to click.option"
     if has_args(func):
