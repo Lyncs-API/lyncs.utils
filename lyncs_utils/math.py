@@ -32,9 +32,11 @@ def sign(num):
     return +1
 
 
-@requires_numpy
 def iscomplex(val):
-    return numpy.iscomplex(val).any()
+    try:
+        return numpy.iscomplex(val).any()
+    except AttributeError:
+        return isinstance(val, complex)
 
 
 def isclose(left, right, warn_tol=None, **kwargs):
