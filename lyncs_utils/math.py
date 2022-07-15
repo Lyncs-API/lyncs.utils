@@ -5,6 +5,7 @@ A collection of factorization utils
 __all__ = [
     "prod",
     "sign",
+    "iscomplex",
     "isclose",
     "factors",
     "prime_factors",
@@ -13,6 +14,7 @@ __all__ = [
 import math
 import warnings
 from functools import reduce
+from .numpy import numpy, requires_numpy
 
 try:
     from math import prod
@@ -30,17 +32,31 @@ def sign(num):
     return +1
 
 
+@requires_numpy
+def iscomplex(val):
+    return numpy.iscomplex(val).any()
+
+
 def isclose(left, right, warn_tol=None, **kwargs):
     """
     If warn_tol is not None and the relative tolerance is larger than rel_tol (default 1e-9)
     but smaller than warn_tol (default 1%), then True is returned and a warning is raised
     """
-    if math.isclose(left, right, **kwargs):
-        return True
-    if warn_tol not in [None, 0] and math.isclose(left, right, rel_tol=warn_tol):
-        warnings.warn(f"accepting {left} close to {right}")
-        return True
-    return False
+    try:
+        if iscomplex(left) or iscomplex(right):
+            if "rel_tol" in kwargs:
+                left = 1 + 2 * abs(left - right) / abs(left + right)
+                right = 1
+            else:
+                left = abs(left - right)
+                right = 0
+        if math.isclose(left, right, **kwargs):
+            return True
+        if warn_tol not in [None, 0] and math.isclose(left, right, rel_tol=warn_tol):
+            warnings.warn(f"accepting {left} close to {right}")
+            return True
+    except TypeError:
+        return left == right
 
 
 def factors(num):
