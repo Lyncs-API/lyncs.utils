@@ -16,7 +16,7 @@ from packaging.version import parse as parse_version
 import __main__
 
 
-def isiterable(obj, types=None):
+def isiterable(obj, types=None, exclude_str=False):
     """Returns if the argument is an iterable object or not.
 
     Examples
@@ -28,9 +28,13 @@ def isiterable(obj, types=None):
     >>> isiterable([1,2,3], (str, float))
     False
     """
-    if types is None:
-        return isinstance(obj, Iterable)
-    return isinstance(obj, Iterable) and all((isinstance(val, types) for val in obj))
+    if not isinstance(obj, Iterable):
+        return False
+    if isinstance(obj, str):
+        return False
+    if types is not None:
+        return all((isinstance(val, types) for val in obj))
+    return True
 
 
 def single_true(iterable):
