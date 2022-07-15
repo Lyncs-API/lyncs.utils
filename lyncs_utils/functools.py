@@ -192,8 +192,12 @@ def clickit(func):
     if func.__doc__:
         doc = func.__doc__.split("\n")
         # comments are all lines starting with "#"
-        comments = tuple(line.strip(" #") for line in doc if line.lstrip().startswith("#"))
-        doc = "\n".join(tuple(line for line in doc if not line.lstrip().startswith("#")))
+        comments = tuple(
+            line.strip(" #") for line in doc if line.lstrip().startswith("#")
+        )
+        doc = "\n".join(
+            tuple(line for line in doc if not line.lstrip().startswith("#"))
+        )
         func.__doc__ = doc
     else:
         comments = ()
