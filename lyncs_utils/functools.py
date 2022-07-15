@@ -189,11 +189,14 @@ def clickit(func):
             return getattr(tpe, "__args__", (None,))[0]
         return tpe
 
-    doc = func.__doc__.split("\n")
-    # comments are all lines starting with "#"
-    comments = tuple(line.strip(" #") for line in doc if line.lstrip().startswith("#"))
-    doc = "\n".join(tuple(line for line in doc if not line.lstrip().startswith("#")))
-    func.__doc__ = doc
+    if func.__doc__:
+        doc = func.__doc__.split("\n")
+        # comments are all lines starting with "#"
+        comments = tuple(line.strip(" #") for line in doc if line.lstrip().startswith("#"))
+        doc = "\n".join(tuple(line for line in doc if not line.lstrip().startswith("#")))
+        func.__doc__ = doc
+    else:
+        comments = ()
 
     def get_help(var):
         "Checking in __doc__ for lines that start with {var}:"
