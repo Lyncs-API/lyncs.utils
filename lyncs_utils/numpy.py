@@ -13,8 +13,8 @@ from .extensions import lazy_import, raiseif
 
 try:
     numpy = lazy_import("numpy")
-except ImportError as numpy:
-    pass
+except ImportError as err:
+    numpy = err
 
 requires_numpy = raiseif(isinstance(numpy, Exception), numpy)
 
