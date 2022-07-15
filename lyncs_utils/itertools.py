@@ -6,9 +6,13 @@ __all__ = [
     "first",
     "last",
     "indexes",
+    "keys",
+    "values",
+    "items",
     "dictmap",
     "dictzip",
     "flat_dict",
+    "allclose",
     "compact_indexes",
 ]
 
@@ -38,6 +42,22 @@ def indexes(iterable, val):
             return
 
 
+def keys(dct):
+    "Calls keys, if available, or dict.keys"
+    try:
+        return dct.keys()
+    except AttributeError:
+        return dict.keys(dct)
+
+
+def values(dct):
+    "Calls values, if available, or dict.values"
+    try:
+        return dct.values()
+    except AttributeError:
+        return dict.values(dct)
+
+
 def items(dct):
     "Calls items, if available, or dict.items"
     try:
@@ -59,9 +79,9 @@ def dictzip(*dicts, fill=True, default=None, values_only=False):
     """
 
     if fill:
-        keys = set.union(*map(set, dicts))
+        keys = set.union(*map(set, map(keys, dicts)))
     else:
-        keys = set.intersection(*map(set, dicts))
+        keys = set.intersection(*map(set, map(keys, dicts)))
 
     for key in keys:
         values = tuple(map(lambda _: _.get(key, default), dicts))
