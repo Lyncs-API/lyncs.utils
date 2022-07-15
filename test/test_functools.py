@@ -1,6 +1,6 @@
 import logging
 from io import StringIO
-from pytest import raises
+from pytest import raises, skip
 from functools import partial
 from lyncs_utils.functools import *
 
@@ -173,6 +173,27 @@ def test_select_kwargs():
     args, kwargs = select_kwargs(f, 1, b=2, c=3, d=4, e=5, f=6)
     assert args == (1, 2)
     assert kwargs == dict(c=3, d=4)
+
+
+def test_clickit():
+    try:
+
+        @clickit
+        def foo(a, b, bar: int = 0):
+            pass
+
+    except ImportError:
+        skip("No click")
+
+    assert hasattr(foo, "__click_params__")
+    params = {param.name: param for param in foo.__click_params__}
+    assert "a" in params
+    assert "b" in params
+    assert "bar" in params
+
+    assert params["a"].required
+    assert params["b"].required
+    assert not params["bar"].required
 
 
 def test_spy():

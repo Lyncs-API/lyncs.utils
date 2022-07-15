@@ -7,6 +7,7 @@ from lyncs_utils import (
     dictmap,
     flat_dict,
     compact_indexes,
+    allclose,
 )
 
 
@@ -74,3 +75,14 @@ def test_error():
 
     with raises(TypeError):
         list(compact_indexes([0.1, "foo"]))
+
+
+def test_allclose():
+    assert allclose([1, 2, 3], (1, 2, 3))
+    assert not allclose([1, 2, 3], (3, 2, 1))
+    assert allclose(0, (0, 0, 0, (0, 0, 0)))
+    assert not allclose(0, (0, 0, 1, (0, 0, 0)))
+    assert allclose({"a": 0, "b": {"c": 0}}, 0)
+    assert allclose(0, {"a": 0, "b": {"c": 0}})
+    assert allclose({"a": 0, "b": {"c": 0}}, {"b": {"c": 0}, "a": 0})
+    assert not allclose({"a": 0, "b": {"c": "d"}}, 0)

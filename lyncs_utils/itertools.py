@@ -6,14 +6,19 @@ __all__ = [
     "first",
     "last",
     "indexes",
+    "keys",
+    "values",
+    "items",
     "dictmap",
     "dictzip",
     "flat_dict",
+    "allclose",
     "compact_indexes",
 ]
 
-from .logical import isiterable
 from collections.abc import Mapping
+from .logical import isiterable
+from .math import isclose
 
 
 def first(iterable):
@@ -38,36 +43,90 @@ def indexes(iterable, val):
             return
 
 
+def keys(dct):
+    "Calls keys, if available, or dict.keys"
+    try:
+        return dct.keys()
+    except AttributeError:
+        return dict.keys(dct)
+
+
+def values(dct):
+    "Calls values, if available, or dict.values"
+    try:
+        return dct.values()
+    except AttributeError:
+        return dict.values(dct)
+
+
+def items(dct):
+    "Calls items, if available, or dict.items"
+    try:
+        return dct.items()
+    except AttributeError:
+        return dict.items(dct)
+
+
 def dictmap(fnc, dct):
     "Map for dictionaries"
-    for key, val in dict.items(dct):
+    for key, val in items(dct):
         yield key, fnc(val)
 
 
-def dictzip(*dicts, fill=True, default=None):
+def dictzip(*dicts, fill=True, default=None, values_only=False):
     """
     Zip for dictionaries.
     Missing keys are optionally filled with a given default value, otherwise ignored.
     """
 
     if fill:
-        keys = set.union(*map(set, dicts))
+        all_keys = set.union(*map(set, map(keys, dicts)))
     else:
-        keys = set.intersection(*map(set, dicts))
+        all_keys = set.intersection(*map(set, map(keys, dicts)))
 
-    for key in keys:
-        yield key, tuple(map(lambda _: _.get(key, default), dicts))
+    for key in all_keys:
+        values = tuple(map(lambda _: _.get(key, default), dicts))
+        if values_only:
+            yield values
+        else:
+            yield key, values
 
 
 def flat_dict(dct, sep="/", base=None):
     "Flats a nested dictionary into a single dictionary with key separated by given `sep`"
-    for key, val in dict.items(dct):
+    for key, val in items(dct):
         if base:
             key = f"{base}{sep}{key}"
         if isinstance(val, Mapping):
             yield from flat_dict(val, sep=sep, base=key)
         else:
             yield key, val
+
+
+def allclose(left, right, **kwargs):
+    "Applies isclose to elements of iterable objects recursively"
+    if not isiterable(left, exclude_str=True) and not isiterable(
+        right, exclude_str=True
+    ):
+        return isclose(left, right, **kwargs)
+    if not isiterable(left):
+        left = [left] * len(right)
+    if not isiterable(right):
+        right = [right] * len(left)
+    if len(left) != len(right):
+        return False
+    if isinstance(left, Mapping) or isinstance(right, Mapping):
+        if not isinstance(left, Mapping):
+            pairs = zip(left, values(right))
+        elif not isinstance(right, Mapping):
+            pairs = zip(values(left), right)
+        else:
+            if set(keys(left)) != set(keys(right)):
+                return False
+            pairs = dictzip(left, right, values_only=True)
+    else:
+        pairs = zip(left, right)
+    return all((allclose(*pair, **kwargs) for pair in pairs))
 
 
 def compact_indexes(indexes):

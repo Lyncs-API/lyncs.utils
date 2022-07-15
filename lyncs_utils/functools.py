@@ -8,12 +8,20 @@ __all__ = [
     "apply_annotations",
     "select_kwargs",
     "spy",
+    "clickit",
 ]
 
+from collections.abc import Sequence
 from functools import partial, wraps
 from logging import debug
 import re
 import inspect
+from .extensions import raiseif
+
+try:
+    import click
+except ImportError as err:
+    click = err
 
 KEYWORD = re.compile("[A-Za-z_][A-Za-z0-9_]*")
 
@@ -146,3 +154,70 @@ def spy(fnc):
         return out
 
     return wrapper
+
+
+@raiseif(isinstance(click, Exception), click)
+def clickit(func):
+    "Decorator that turns any function argument to click.option"
+    if has_args(func):
+        raise NotImplementedError("TODO: investigate how to treat `*args`")
+
+    annotations = getattr(func, "__annotations__", {})
+    defaults = getattr(func, "__defaults__", {})
+    varnames = get_varnames(func)
+    nargs = len(varnames) - len(defaults)
+
+    def get_key(var):
+        "Returns a key for the variable"
+        var = var.replace("_", "-")
+        if annotations.get(var, None) == bool:
+            if var.startswith("with-"):
+                return f"--{var}/--without-{var[5:]}"
+            return f"--{var}/--no-{var}"
+        return f"--{var}"
+
+    def is_multiple(var):
+        "Multiple variables must be typed Sequence"
+        return getattr(annotations.get(var, None), "__origin__", None) is Sequence
+
+    def get_type(var):
+        "Returns the type of var"
+        if var not in annotations:
+            return None
+        tpe = annotations[var]
+        if is_multiple(var):
+            return getattr(tpe, "__args__", (None,))[0]
+        return tpe
+
+    if func.__doc__:
+        doc = func.__doc__.split("\n")
+        # comments are all lines starting with "#"
+        comments = tuple(
+            line.strip(" #") for line in doc if line.lstrip().startswith("#")
+        )
+        doc = "\n".join(
+            tuple(line for line in doc if not line.lstrip().startswith("#"))
+        )
+        func.__doc__ = doc
+    else:
+        comments = ()
+
+    def get_help(var):
+        "Checking in __doc__ for lines that start with {var}:"
+        for line in comments:
+            if line.startswith(var + ":"):
+                return line[len(var) + 1 :].strip()
+        return ""
+
+    for i, var in enumerate(varnames):
+        value = None if i < nargs else defaults[i - nargs]
+        func = click.option(
+            get_key(var),
+            required=i < nargs,
+            default=value,
+            multiple=is_multiple(var),
+            type=get_type(var),
+            help=get_help(var),
+        )(func)
+
+    return func

@@ -5,7 +5,7 @@
 [![license](https://img.shields.io/github/license/Lyncs-API/lyncs.utils?logo=github&logoColor=white)](https://github.com/Lyncs-API/lyncs.utils/blob/master/LICENSE)
 [![build & test](https://img.shields.io/github/workflow/status/Lyncs-API/lyncs.utils/build%20&%20test?logo=github&logoColor=white)](https://github.com/Lyncs-API/lyncs.utils/actions)
 [![codecov](https://img.shields.io/codecov/c/github/Lyncs-API/lyncs.utils?logo=codecov&logoColor=white)](https://codecov.io/gh/Lyncs-API/lyncs.utils)
-[![pylint](https://img.shields.io/badge/pylint%20score-9.4%2F10-green?logo=python&logoColor=white)](http://pylint.pycqa.org/)
+[![pylint](https://img.shields.io/badge/pylint%20score-9.5%2F10-green?logo=python&logoColor=white)](http://pylint.pycqa.org/)
 [![black](https://img.shields.io/badge/code%20style-black-000000.svg?logo=codefactor&logoColor=white)](https://github.com/ambv/black)
 
 This package provides a collection of generic-purpose and stand-alone functions that are of common use.
@@ -62,7 +62,8 @@ Math utils. See `lyncs_utils.math`.
 
 - `prod(arr)`:  Enables math.prod for all versions of Python
 - `sign(n)`:  Sign of a number
-- `isclose(a,b,warn_tol=None,**)`: isclose with a warning tol
+- `iscomplex(n)`: If n is complex
+- `isclose(a,b,warn_tol=None,**)`: math.isclose with support for complex and warning tol
 - `factors(n)`: Returns the list of factors of n
 - `prime_factors(n)`: Returns the list of prime factors of n
 
@@ -77,6 +78,7 @@ Tools for functions. See `lyncs_utils.functools`.
 - `apply_annotations(fnc, *args, **kwargs)`: Applies the annotations of fnc to the respective *args, **kwargs
 - `select_kwargs(fnc, *args, **kwargs)`: Calls fnc passing *args and ONLY the applicable **kwargs
 - `@spy`: Decorator that will log debug information when the function is called
+- `@clickit`: Decorator that adds click.option for any function argument
 
 ### Context Managers
 
@@ -122,7 +124,11 @@ Functions for iterable objects
 - `first(it)`: first element of an iterable
 - `last(it)`: last element of an iterable
 - `indexes(it,val)`: indexes of occurances of a value in an iterable
+- `keys(dict)`: calls keys, if available, or dict.keys
+- `values(dict)`: calls values, if available, or dict.values
+- `items(dict)`: calls items, if available, or dict.items
 - `dictmap(fnc, dict)`: map for dictionaries
 - `dictzip(*dicts, fill=True, default=None)`: zip for dictionaries
 - `flat_dict(dict, sep="/", base="")`: flat nested dictionaries into a single dict
+- `allclose(left, right, **)`: applies isclose recursively to iterable objects
 - `compact_indexes(ids)`: compats list of integers into ranges where possible
