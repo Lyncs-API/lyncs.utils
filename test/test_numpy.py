@@ -1,7 +1,7 @@
 import pytest
 from lyncs_utils.numpy import *
 
-skip = pytest.mark.skipif(numpy is None, reason="Numpy not available")
+skip = pytest.mark.skipif(isinstance(numpy, Exception), reason="Numpy not available")
 
 
 @skip

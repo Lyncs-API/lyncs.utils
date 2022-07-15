@@ -31,7 +31,7 @@ def test_lazy_import():
         lazy_import("non.existing.module")
 
 
-@mark.skipif(numpy is None, reason="Numpy not available")
+@mark.skipif(isinstance(numpy, None), reason="Numpy not available")
 def test_setitems():
     arr = numpy.zeros((5, 4, 6))
     setitems(arr, 13)

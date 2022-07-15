@@ -1,6 +1,6 @@
 import logging
 from io import StringIO
-from pytest import raises
+from pytest import raises, skip
 from functools import partial
 from lyncs_utils.functools import *
 
@@ -183,7 +183,7 @@ def test_clickit():
             pass
 
     except ImportError:
-        pytest.skip("No click")
+        skip("No click")
 
     assert hasattr(foo, "__click_params__")
     params = {param.name: param for param in foo.__click_params__}
