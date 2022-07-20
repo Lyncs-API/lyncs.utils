@@ -169,12 +169,12 @@ def clickit(func):
 
     def get_key(var):
         "Returns a key for the variable"
-        var = var.replace("_", "-")
-        if annotations.get(var, None) == bool:
-            if var.startswith("with-"):
-                return f"--{var}/--without-{var[5:]}"
-            return f"--{var}/--no-{var}"
-        return f"--{var}"
+        out = var.replace("_", "-")
+        if get_type(var) == bool:
+            if out.startswith("with-"):
+                return f"--{out}/--without-{out[5:]}"
+            return f"--{out}/--no-{out}"
+        return f"--{out}"
 
     def is_multiple(var):
         "Multiple variables must be typed Sequence"
@@ -186,7 +186,10 @@ def clickit(func):
             return None
         tpe = annotations[var]
         if is_multiple(var):
-            return getattr(tpe, "__args__", (None,))[0]
+            args = getattr(tpe, "__args__", (None,))
+            if len(args) > 1:
+                return args
+            return args[0]
         return tpe
 
     if func.__doc__:
