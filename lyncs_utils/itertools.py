@@ -12,6 +12,7 @@ __all__ = [
     "dictmap",
     "dictzip",
     "flat_dict",
+    "nest_dict",
     "allclose",
     "compact_indexes",
 ]
@@ -92,15 +93,30 @@ def dictzip(*dicts, fill=True, default=None, values_only=False):
             yield key, values
 
 
-def flat_dict(dct, sep="/", base=None):
-    "Flats a nested dictionary into a single dictionary with key separated by given `sep`"
+def flat_dict(dct, sep=None, base=()):
+    "Flats a nested dictionary into a single dictionary with key that is either a tuple or joint with `sep` (if given)"
     for key, val in items(dct):
-        if base:
-            key = f"{base}{sep}{key}"
+        key = base + (key,)
         if isinstance(val, Mapping):
             yield from flat_dict(val, sep=sep, base=key)
         else:
+            if sep is not None:
+                key = sep.join(key)
             yield key, val
+
+
+def nest_dict(dct, sep=None):
+    "Turns a dictionary into a nested dictionary splitting the key that is either a tuple or using `sep` (if given)"
+    out = {}
+    for key, val in items(dct):
+        if sep is not None:
+            key = key.split(sep)
+        tmp = out
+        for part in key[:-1]:
+            tmp.setdefault(part, {})
+            tmp = tmp[part]
+        tmp[key[-1]] = val
+    return out
 
 
 def allclose(left, right, **kwargs):

@@ -6,6 +6,7 @@ from lyncs_utils import (
     dictzip,
     dictmap,
     flat_dict,
+    nest_dict,
     compact_indexes,
     allclose,
 )
@@ -42,15 +43,24 @@ def test_dictzip():
     assert dict(dictzip(dict1, dict2, fill=False)) == dict(a=(1, "a"), b=(2, "b"))
 
 
-def test_dictzip():
+def test_flatdict():
     dict1 = dict(a=dict(b=dict(c="d")))
     dict2 = dict(flat_dict(dict1))
+    assert tuple(dict2) == (("a", "b", "c"),)
+    assert dict2["a", "b", "c"] == "d"
+    assert nest_dict(dict2) == dict1
+
+    dict2 = dict(flat_dict(dict1, "/"))
     assert tuple(dict2) == ("a/b/c",)
     assert dict2["a/b/c"] == "d"
+    assert dict(flat_dict(dict2, "/")) == dict2
+    assert nest_dict(dict2, "/") == dict1
 
-    dict2 = dict(flat_dict(dict1, sep=" ", base="foo"))
+    dict2 = dict(flat_dict(dict1, sep=" ", base=("foo",)))
     assert tuple(dict2) == ("foo a b c",)
     assert dict2["foo a b c"] == "d"
+    assert dict(flat_dict(dict2, " ")) == dict2
+    assert nest_dict(dict2, " ")["foo"] == dict1
 
 
 def test_example():
