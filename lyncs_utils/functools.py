@@ -210,9 +210,12 @@ def clickit(func):
         for line in comments:
             if line.startswith(var + ":"):
                 return line[len(var) + 1 :].strip()
-        return ""
+        return "NODOC"
 
     for i, var in enumerate(varnames):
+        if var == "ctx":
+            func = click.pass_context(func)
+            continue
         value = None if i < nargs else defaults[i - nargs]
         func = click.option(
             get_key(var),
