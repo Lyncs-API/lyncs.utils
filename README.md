@@ -129,6 +129,7 @@ Functions for iterable objects
 - `items(dict)`: calls items, if available, or dict.items
 - `dictmap(fnc, dict)`: map for dictionaries
 - `dictzip(*dicts, fill=True, default=None)`: zip for dictionaries
-- `flat_dict(dict, sep="/", base="")`: flat nested dictionaries into a single dict
+- `flat_dict(dict, sep=None, base=())`: flat nested dictionaries into a single dict
+- `nest_dict(dict, sep=None)`: turns a flat dictionaries into a nested dict
 - `allclose(left, right, **)`: applies isclose recursively to iterable objects
 - `compact_indexes(ids)`: compats list of integers into ranges where possible
