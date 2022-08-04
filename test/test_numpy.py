@@ -1,4 +1,5 @@
 import pytest
+from lyncs_utils import allclose
 from lyncs_utils.numpy import *
 
 skip = pytest.mark.skipif(isinstance(numpy, Exception), reason="Numpy not available")
@@ -46,3 +47,14 @@ def test_gammas_euclidean():
 
         if dim % 2 == 0:
             assert ((1j) ** ((3 * dim) // 2 - 2) * prod == g[-1]).all()
+
+
+@skip
+def test_su_generators():
+    for ncol in range(1, 10):
+        for sparse in (False,):  # True
+            assert len(list(su_generators(ncol))) == (ncol**2 - 1)
+            for gen in su_generators(ncol, sparse=sparse):
+                assert (gen == -gen.transpose().conj()).all()
+                assert allclose(gen.trace(), 0, abs_tol=ncol * 1e-16)
+                assert allclose(gen.dot(gen).trace(), -1 / 2, abs_tol=ncol * 1e-16)

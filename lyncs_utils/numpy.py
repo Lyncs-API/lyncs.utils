@@ -6,9 +6,12 @@ __all__ = [
     "numpy",
     "outer",
     "gamma_matrices",
+    "su_generators",
     "requires_numpy",
+    "requires_scipy",
 ]
 
+from math import sqrt
 from .extensions import lazy_import, raiseif
 
 try:
@@ -17,6 +20,13 @@ except ImportError as err:
     numpy = err
 
 requires_numpy = raiseif(isinstance(numpy, Exception), numpy)
+
+try:
+    scipy = lazy_import("scipy")
+except ImportError as err:
+    scipy = err
+
+requires_scipy = raiseif(isinstance(scipy, Exception), scipy)
 
 
 @requires_numpy
@@ -61,3 +71,33 @@ def gamma_matrices(dim=4, euclidean=True):
     gammas.append(chiral)
 
     return tuple(gammas)
+
+
+@requires_scipy
+@requires_numpy
+def su_generators(ncol=3, sparse=False):
+    "Returns generators of the su(ncol) Lie algebra"
+
+    norm = lambda mat: 1 / sqrt(2 * sum(-(mat * mat).diagonal()).real)
+
+    # Off-diagonal: anti-hermitian
+    for i in range(ncol - 1):
+        for j in range(i + 1, ncol):
+            for data in [1, -1], [1j, 1j]:
+                row = [i, j]
+                col = [j, i]
+                mat = scipy.sparse.coo_matrix((data, (row, col)), shape=(ncol, ncol))
+                mat = mat * norm(mat)
+                if not sparse:
+                    mat = mat.toarray()
+                yield mat
+
+    # Diagonal: traceless
+    for n in range(1, ncol):
+        dia = range(n + 1)
+        data = [1j] * n + [-n * 1j]
+        mat = scipy.sparse.coo_matrix((data, (dia, dia)), shape=(ncol, ncol))
+        mat = mat * norm(mat)
+        if not sparse:
+            mat = mat.toarray()
+        yield mat

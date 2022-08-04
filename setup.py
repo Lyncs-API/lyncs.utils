@@ -3,7 +3,7 @@ from lyncs_setuptools import setup
 setup(
     "lyncs_utils",
     extras_require={
-        "numpy": ["numpy"],
+        "numpy": ["numpy", "scipy"],
         "clickit": ["click"],
         "test": ["pytest", "pytest-cov", "ipython", "numpy", "lyncs_setuptools"],
     },
