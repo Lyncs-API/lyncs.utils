@@ -116,7 +116,7 @@ Functions returning or manipulating Numpy arrays (available with `lyncs[numpy]`)
 
 - `outer(A,B)`: outer product, alias of `numpy.kron`.
 - `gamma_matrices(dim, euclidean=True)`: returns n-dimensional gamma matrices
-- `su_generators(N, sparse=False)`: returns NxN generators of su(N)
+- `su_generators(N)`: returns NxN generators of su(N)
 
 ### Itertools
 

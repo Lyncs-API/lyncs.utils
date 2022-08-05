@@ -52,9 +52,8 @@ def test_gammas_euclidean():
 @skip
 def test_su_generators():
     for ncol in range(1, 10):
-        for sparse in (False,):  # True
-            assert len(list(su_generators(ncol))) == (ncol**2 - 1)
-            for gen in su_generators(ncol, sparse=sparse):
-                assert (gen == -gen.transpose().conj()).all()
-                assert allclose(gen.trace(), 0, abs_tol=ncol * 1e-16)
-                assert allclose(gen.dot(gen).trace(), -1 / 2, abs_tol=ncol * 1e-16)
+        assert len(list(su_generators(ncol))) == (ncol**2 - 1)
+        for gen in su_generators(ncol):
+            assert (gen == -gen.transpose().conj()).all()
+            assert allclose(gen.trace(), 0, abs_tol=ncol * 1e-16)
+            assert allclose(gen.dot(gen).trace(), -1 / 2, abs_tol=ncol * 1e-16)
