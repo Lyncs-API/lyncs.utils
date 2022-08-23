@@ -2,7 +2,25 @@ import logging
 from io import StringIO
 from pytest import raises, skip
 from functools import partial
+from dataclasses import dataclass
 from lyncs_utils.functools import *
+
+
+@dataclass
+class Dataclass:
+    a: int
+    b: float
+    c: complex = 0
+    d: str = "foo"
+
+    def __call__(self: object, e, f, g: str = "g"):
+        pass
+
+
+@dataclass
+class Child(Dataclass):
+    e: int = 1
+    f: float = 2
 
 
 def test_is_keyword():
@@ -20,6 +38,9 @@ def test_varnames():
         pass
 
     assert get_varnames(f) == ("a", "b", "c", "d")
+    assert get_varnames(Dataclass) == ("a", "b", "c", "d")
+    assert get_varnames(Child) == ("a", "b", "c", "d", "e", "f")
+    assert get_varnames(Dataclass(1, 2)) == ("self", "e", "f", "g")
     assert get_varnames("") == ()
 
 
@@ -127,11 +148,25 @@ def test_has_kwargs():
         has_kwargs(1)
 
 
+def test_defaults():
+    def f(a, b, c=1, d=2):
+        pass
+
+    assert get_defaults(f) == {"c": 1, "d": 2}
+    assert get_defaults(Dataclass) == {"c": 0, "d": "foo"}
+    assert get_defaults(Child) == {"c": 0, "d": "foo", "e": 1, "f": 2}
+    assert get_defaults("") == {}
+
+
 def test_annotations():
     def f(a, b: float, c=1, d: str = 2):
         pass
 
     assert get_varnames(f) == ("a", "b", "c", "d")
+    assert get_annotations(f) == {"b": float, "d": str}
+    assert get_annotations(Dataclass) == {"a": int, "b": float, "c": complex, "d": str}
+    assert get_annotations(Dataclass(1, 2)) == {"self": object, "g": str}
+    assert get_annotations("") == {}
     assert apply_annotations(f, 1, 2) == ((1, 2.0), {})
     assert apply_annotations(f, 1, b=2) == ((1,), {"b": 2.0})
     assert apply_annotations(f, 1, b=2, d=3) == ((1,), {"b": 2.0, "d": "3"})
@@ -194,6 +229,18 @@ def test_clickit():
     assert params["a"].required
     assert params["b"].required
     assert not params["bar"].required
+    assert params["bar"].default == 0
+
+    cls = clickit(Dataclass)
+    assert hasattr(cls, "__click_params__")
+    params = {param.name: param for param in cls.__click_params__}
+    assert tuple(params) == ("a", "b", "c", "d")
+    assert params["a"].required
+    assert params["b"].required
+    assert not params["c"].required
+    assert params["c"].default == 0
+    assert not params["d"].required
+    assert params["d"].default == "foo"
 
 
 def test_spy():

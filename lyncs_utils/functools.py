@@ -5,6 +5,8 @@ __all__ = [
     "get_varnames",
     "has_args",
     "has_kwargs",
+    "get_defaults",
+    "get_annotations",
     "apply_annotations",
     "select_kwargs",
     "spy",
@@ -12,6 +14,7 @@ __all__ = [
 ]
 
 from collections.abc import Sequence
+from dataclasses import _MISSING_TYPE
 from functools import partial, wraps
 from logging import debug
 import re
@@ -35,11 +38,20 @@ def is_keyword(key):
 
 def get_varnames(func):
     "Returns the list of varnames of the function"
-
-    try:
+    if hasattr(func, "__code__"):
         return func.__code__.co_varnames[: func.__code__.co_argcount]
-    except AttributeError:
-        return ()
+    if issubclass(type(func), type):
+        if hasattr(func, "__dataclass_fields__"):
+            return tuple(
+                key for key, val in func.__dataclass_fields__.items() if val.init
+            )
+        if hasattr(func, "__init__"):
+            return get_varnames(func.__init__)
+        if hasattr(func, "__new__"):
+            return get_varnames(func.__new__)
+    if hasattr(func, "__call__"):
+        return get_varnames(func.__call__)
+    return ()
 
 
 def get_func(obj):
@@ -87,6 +99,49 @@ def has_kwargs(func):
         raise TypeError(f"Expected a function. Got {type(func)}") from err
 
 
+def get_defaults(func):
+    "Returns default values of a function/class"
+    if hasattr(func, "__defaults__"):
+        keys = get_varnames(func)
+        vals = func.__defaults__
+        return {key: val for key, val in zip(keys[-len(vals) :], vals)}
+    if issubclass(type(func), type):
+        if hasattr(func, "__dataclass_fields__"):
+            return {
+                key: val.default
+                for key, val in func.__dataclass_fields__.items()
+                if val.init and not isinstance(val.default, _MISSING_TYPE)
+            }
+        if hasattr(func, "__init__"):
+            return get_defaults(func.__init__)
+        if hasattr(func, "__new__"):
+            return get_defaults(func.__new__)
+    if hasattr(func, "__call__"):
+        return get_defaults(func.__call__)
+    return {}
+
+
+def get_annotations(func):
+    "Returns annotations of a function/class"
+    if issubclass(type(func), type):
+        if hasattr(func, "__dataclass_fields__"):
+            return {
+                key: val.type
+                for key, val in func.__dataclass_fields__.items()
+                if val.init and not isinstance(val.type, _MISSING_TYPE)
+            }
+        if hasattr(func, "__init__"):
+            return get_annotations(func.__init__)
+        if hasattr(func, "__new__"):
+            return get_annotations(func.__new__)
+    if hasattr(func, "__call__"):
+        if hasattr(func.__call__, "__annotations__"):
+            return func.__call__.__annotations__
+    if hasattr(func, "__annotations__"):
+        return func.__annotations__
+    return {}
+
+
 def apply_annotations(func, *args, _caller=(lambda fnc, val: fnc(val)), **kwargs):
     """Applies the annotations of the func arguments to the respective *args, **kwargs.
 
@@ -98,7 +153,7 @@ def apply_annotations(func, *args, _caller=(lambda fnc, val: fnc(val)), **kwargs
         `arg = _caller(annotation, arg)`.
     """
 
-    annotations = getattr(func, "__annotations__", {})
+    annotations = get_annotations(func)
     annotations = tuple((key, val) for key, val in annotations.items() if callable(val))
 
     if not annotations:
@@ -162,8 +217,8 @@ def clickit(func):
     if has_args(func):
         raise NotImplementedError("TODO: investigate how to treat `*args`")
 
-    annotations = getattr(func, "__annotations__", {})
-    defaults = getattr(func, "__defaults__", {})
+    annotations = get_annotations(func)
+    defaults = get_defaults(func)
     varnames = get_varnames(func)
     nargs = len(varnames) - len(defaults)
 
@@ -212,11 +267,11 @@ def clickit(func):
                 return line[len(var) + 1 :].strip()
         return "NODOC"
 
-    for i, var in enumerate(varnames):
-        value = None if i < nargs else defaults[i - nargs]
+    for var in varnames:
+        value = defaults.get(var, None)
         func = click.option(
             get_key(var),
-            required=i < nargs,
+            required=var not in defaults,
             default=value,
             multiple=is_multiple(var),
             type=get_type(var),
