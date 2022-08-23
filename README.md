@@ -75,6 +75,8 @@ Tools for functions. See `lyncs_utils.functools`.
 - `get_varnames(fnc)`: Returns the list of varnames of the function
 - `has_args(fnc)`: Whether the function uses *args
 - `has_kwargs(fnc)`: Whether the function uses **kwargs
+- `get_defaults(fnc)`: Returns the dict of default values of the function
+- `get_annotations(fnc)`: Returns the dict of annotations of the function
 - `apply_annotations(fnc, *args, **kwargs)`: Applies the annotations of fnc to the respective *args, **kwargs
 - `select_kwargs(fnc, *args, **kwargs)`: Calls fnc passing *args and ONLY the applicable **kwargs
 - `@spy`: Decorator that will log debug information when the function is called
