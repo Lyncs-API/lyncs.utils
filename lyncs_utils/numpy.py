@@ -68,7 +68,8 @@ def gamma_matrices(dim=4, euclidean=True):
 def su_generators(ncol=3):
     "Returns generators of the su(ncol) Lie algebra"
 
-    norm = lambda mat: 1 / (-2 * mat.dot(mat).trace().real) ** 0.5
+    def norm(mat):
+        return 1 / (-2 * mat.dot(mat).trace().real) ** 0.5
 
     # Off-diagonal: anti-hermitian
     for i in range(ncol - 1):
@@ -79,9 +80,9 @@ def su_generators(ncol=3):
                 yield mat * norm(mat)
 
     # Diagonal: traceless
-    for n in range(1, ncol):
-        dia = tuple(range(n + 1))
-        data = [1j] * n + [-n * 1j]
+    for i in range(1, ncol):
+        dia = tuple(range(i + 1))
+        data = [1j] * i + [-i * 1j]
         mat = numpy.zeros((ncol, ncol), dtype=complex)
         mat[dia, dia] = data
         yield mat * norm(mat)

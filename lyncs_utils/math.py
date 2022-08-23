@@ -14,7 +14,7 @@ __all__ = [
 import math
 import warnings
 from functools import reduce
-from .numpy import numpy, requires_numpy
+from .numpy import numpy
 
 try:
     from math import prod
@@ -33,6 +33,7 @@ def sign(num):
 
 
 def iscomplex(val):
+    "If val is complex"
     try:
         return numpy.iscomplex(val).any()
     except AttributeError:
@@ -58,7 +59,8 @@ def isclose(left, right, warn_tol=None, **kwargs):
             warnings.warn(f"accepting {left} close to {right}")
             return True
     except TypeError:
-        return left == right
+        pass
+    return left == right
 
 
 def factors(num):
