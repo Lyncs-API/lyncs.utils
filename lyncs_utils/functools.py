@@ -23,8 +23,8 @@ from .extensions import raiseif
 
 try:
     import click
-except ImportError as err:
-    click = err
+except ImportError as click:
+    click = click
 
 KEYWORD = re.compile("[A-Za-z_][A-Za-z0-9_]*")
 
@@ -104,7 +104,7 @@ def get_defaults(func):
     if hasattr(func, "__defaults__"):
         keys = get_varnames(func)
         vals = func.__defaults__
-        return {key: val for key, val in zip(keys[-len(vals) :], vals)}
+        return dict(zip(keys[-len(vals) :], vals))
     if issubclass(type(func), type):
         if hasattr(func, "__dataclass_fields__"):
             return {
@@ -220,7 +220,6 @@ def clickit(func):
     annotations = get_annotations(func)
     defaults = get_defaults(func)
     varnames = get_varnames(func)
-    nargs = len(varnames) - len(defaults)
 
     def get_key(var):
         "Returns a key for the variable"
