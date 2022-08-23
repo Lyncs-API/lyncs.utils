@@ -30,7 +30,7 @@ def isiterable(obj, types=None, exclude_str=False):
     """
     if not isinstance(obj, Iterable):
         return False
-    if isinstance(obj, str):
+    if exclude_str and isinstance(obj, str):
         return False
     if types is not None:
         return all((isinstance(val, types) for val in obj))
