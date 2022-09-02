@@ -14,12 +14,17 @@ __all__ = [
     "classproperty",
     "call_method",
     "default",
+    "methodof",
+    "before_super",
+    "after_super",
 ]
 
+import sys
 from types import MethodType
 from copy import copy
 from functools import wraps
 from inspect import signature, _empty
+from .functools import foo
 
 
 def add_to(cls):
@@ -287,3 +292,49 @@ def call_method(self, method, *args, **kwargs):
     if callable(method):
         return method(self, *args, **kwargs)
     raise TypeError(f"Unexpected type {type(method)}")
+
+
+def methodof(self, method):
+    "Returns the class where method has been defined"
+    qualname = method.__qualname__.split(".")
+    for cls in self.__class__.__mro__:
+        if qualname[-2] == cls.__name__ and qualname[-1] in cls.__dict__:
+            return cls
+    raise RuntimeError(f"Could not deduce the class of {method} from {self}")
+
+
+def before_super(func):
+    "Decorator that execute method before calling the correspoding of super"
+
+    cls = []
+
+    @wraps(func)
+    def wrapped(self, *args, **kwargs):
+        if not cls:
+            cls.append(methodof(self, func))
+        if not isinstance(self, cls[0]):
+            raise RuntimeError(f"{self} is not instance of {cls[0]}")
+        ret = func(self, *args, **kwargs)
+        fnc = getattr(super(cls[0], self), func.__name__, foo)
+        fnc(*args, **kwargs)
+        return ret
+
+    return wrapped
+
+
+def after_super(func):
+    "Decorator that execute method after calling the correspoding of super"
+
+    cls = []
+
+    @wraps(func)
+    def wrapped(self, *args, **kwargs):
+        if not cls:
+            cls.append(methodof(self, func))
+        if not isinstance(self, cls[0]):
+            raise RuntimeError(f"{self} is not instance of {cls[0]}")
+        fnc = getattr(super(cls[0], self), func.__name__, foo)
+        fnc(*args, **kwargs)
+        return func(self, *args, **kwargs)
+
+    return wrapped

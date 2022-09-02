@@ -7,9 +7,12 @@ from lyncs_utils import isiterable, single_true, interactive, version
 def test_isiterable():
     assert isiterable([])
     assert isiterable(map(lambda _: _, []))
-    assert isiterable([1, 2, 3], int)
+    assert isiterable([1, 2, 3], int, exclude=str, size=3)
     assert not isiterable(1)
     assert not isiterable([1, 2, 3], (str, float))
+    assert not isiterable([1, 2, 3], exclude=(int))
+    assert not isiterable([1, 2, 3], size=2)
+    assert isiterable([1, 2, 3], size=(2, 3))
 
 
 def test_single_true():

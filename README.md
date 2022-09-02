@@ -5,7 +5,7 @@
 [![license](https://img.shields.io/github/license/Lyncs-API/lyncs.utils?logo=github&logoColor=white)](https://github.com/Lyncs-API/lyncs.utils/blob/master/LICENSE)
 [![build & test](https://img.shields.io/github/workflow/status/Lyncs-API/lyncs.utils/build%20&%20test?logo=github&logoColor=white)](https://github.com/Lyncs-API/lyncs.utils/actions)
 [![codecov](https://img.shields.io/codecov/c/github/Lyncs-API/lyncs.utils?logo=codecov&logoColor=white)](https://codecov.io/gh/Lyncs-API/lyncs.utils)
-[![pylint](https://img.shields.io/badge/pylint%20score-9.5%2F10-green?logo=python&logoColor=white)](http://pylint.pycqa.org/)
+[![pylint](https://img.shields.io/badge/pylint%20score-9.6%2F10-green?logo=python&logoColor=white)](http://pylint.pycqa.org/)
 [![black](https://img.shields.io/badge/code%20style-black-000000.svg?logo=codefactor&logoColor=white)](https://github.com/ambv/black)
 
 This package provides a collection of generic-purpose and stand-alone functions that are of common use.
@@ -40,6 +40,9 @@ Functions and decorator for classes. See `lyncs_utils.class_utils`.
 - `call_method(obj, fnc, *args, **kwargs)`: Calls a method of the obj.
 - `default_repr_pretty`: Default method to use for _repr_pretty_
 - `default(value, type=None, doc=None)`: Attribute with default value and optional type checking
+- `methodof(self, func)`: Returns the class where method has been defined
+- `@before_super`: Decorator that call method from super before executing for self
+- `@after_super`: Decorator that call method from super after executing for self
 
 ### Extensions
 
@@ -72,9 +75,12 @@ Math utils. See `lyncs_utils.math`.
 Tools for functions. See `lyncs_utils.functools`.
 
 - `is_keyword(key)`: Whether key can be used as a function keyword
+- `get_docstring(fnc)`: Returns the docstring of a function or class
 - `get_varnames(fnc)`: Returns the list of varnames of the function
 - `has_args(fnc)`: Whether the function uses *args
 - `has_kwargs(fnc)`: Whether the function uses **kwargs
+- `get_defaults(fnc)`: Returns the dict of default values of the function
+- `get_annotations(fnc)`: Returns the dict of annotations of the function
 - `apply_annotations(fnc, *args, **kwargs)`: Applies the annotations of fnc to the respective *args, **kwargs
 - `select_kwargs(fnc, *args, **kwargs)`: Calls fnc passing *args and ONLY the applicable **kwargs
 - `@spy`: Decorator that will log debug information when the function is called
@@ -116,6 +122,7 @@ Functions returning or manipulating Numpy arrays (available with `lyncs[numpy]`)
 
 - `outer(A,B)`: outer product, alias of `numpy.kron`.
 - `gamma_matrices(dim, euclidean=True)`: returns n-dimensional gamma matrices
+- `su_generators(N)`: returns NxN generators of su(N)
 
 ### Itertools
 

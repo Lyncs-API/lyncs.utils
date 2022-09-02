@@ -6,6 +6,7 @@ __all__ = [
     "numpy",
     "outer",
     "gamma_matrices",
+    "su_generators",
     "requires_numpy",
 ]
 
@@ -61,3 +62,27 @@ def gamma_matrices(dim=4, euclidean=True):
     gammas.append(chiral)
 
     return tuple(gammas)
+
+
+@requires_numpy
+def su_generators(ncol=3):
+    "Returns generators of the su(ncol) Lie algebra"
+
+    def norm(mat):
+        return 1 / (-2 * mat.dot(mat).trace().real) ** 0.5
+
+    # Off-diagonal: anti-hermitian
+    for i in range(ncol - 1):
+        for j in range(i + 1, ncol):
+            for data in (1, -1), (1j, 1j):
+                mat = numpy.zeros((ncol, ncol), dtype=complex)
+                mat[i, j], mat[j, i] = data
+                yield mat * norm(mat)
+
+    # Diagonal: traceless
+    for i in range(1, ncol):
+        dia = tuple(range(i + 1))
+        data = [1j] * i + [-i * 1j]
+        mat = numpy.zeros((ncol, ncol), dtype=complex)
+        mat[dia, dia] = data
+        yield mat * norm(mat)

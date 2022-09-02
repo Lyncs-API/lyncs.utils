@@ -125,9 +125,9 @@ def allclose(left, right, **kwargs):
         right, exclude_str=True
     ):
         return isclose(left, right, **kwargs)
-    if not isiterable(left):
+    if not isiterable(left, exclude_str=True):
         left = [left] * len(right)
-    if not isiterable(right):
+    if not isiterable(right, exclude_str=True):
         right = [right] * len(left)
     if len(left) != len(right):
         return False
