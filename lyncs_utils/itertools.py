@@ -121,9 +121,7 @@ def nest_dict(dct, sep=None):
 
 def allclose(left, right, **kwargs):
     "Applies isclose to elements of iterable objects recursively"
-    if not isiterable(left, exclude_str=True) and not isiterable(
-        right, exclude_str=True
-    ):
+    if not isiterable(left, exclude=str) and not isiterable(right, exclude=str):
         return isclose(left, right, **kwargs)
     if not isiterable(left):
         left = [left] * len(right)
