@@ -7,6 +7,8 @@ from lyncs_utils import (
     add_to,
     call_method,
     default,
+    before_super,
+    after_super,
 )
 from random import random
 import pytest
@@ -132,3 +134,33 @@ def test_call_method():
     assert call_method(foo, "get_length") == 10
     assert call_method(foo, foo.get_length) == 10
     assert call_method(foo, Foo.get_length) == 10
+
+
+def test_before_super():
+    class A:
+        def append(self, lst):
+            lst.append("A")
+
+    class B(A):
+        @before_super
+        def append(self, lst):
+            lst.append("B")
+
+    lst = []
+    B().append(lst)
+    assert lst == ["B", "A"]
+
+
+def test_after_super():
+    class A:
+        def append(self, lst):
+            lst.append("A")
+
+    class B(A):
+        @after_super
+        def append(self, lst):
+            lst.append("B")
+
+    lst = []
+    B().append(lst)
+    assert lst == ["A", "B"]
