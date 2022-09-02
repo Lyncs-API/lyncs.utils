@@ -40,6 +40,9 @@ Functions and decorator for classes. See `lyncs_utils.class_utils`.
 - `call_method(obj, fnc, *args, **kwargs)`: Calls a method of the obj.
 - `default_repr_pretty`: Default method to use for _repr_pretty_
 - `default(value, type=None, doc=None)`: Attribute with default value and optional type checking
+- `methodof(self, func)`: Returns the class where method has been defined
+- `@before_super`: Decorator that call method from super before executing for self
+- `@after_super`: Decorator that call method from super after executing for self
 
 ### Extensions
 
@@ -72,6 +75,7 @@ Math utils. See `lyncs_utils.math`.
 Tools for functions. See `lyncs_utils.functools`.
 
 - `is_keyword(key)`: Whether key can be used as a function keyword
+- `get_docstring(fnc)`: Returns the docstring of a function or class
 - `get_varnames(fnc)`: Returns the list of varnames of the function
 - `has_args(fnc)`: Whether the function uses *args
 - `has_kwargs(fnc)`: Whether the function uses **kwargs
