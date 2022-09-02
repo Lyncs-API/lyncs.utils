@@ -16,7 +16,7 @@ from packaging.version import parse as parse_version
 import __main__
 
 
-def isiterable(obj, types=None, exclude=None, size=None):
+def isiterable(obj, types=None, exclude=None, exclude_str=False, size=None):
     """Returns if the argument is an iterable object or not.
 
     Examples
@@ -29,6 +29,8 @@ def isiterable(obj, types=None, exclude=None, size=None):
     False
     """
     if not isinstance(obj, Iterable):
+        return False
+    if exclude_str and isinstance(obj, str):
         return False
     if size is not None:
         if not isiterable(size):
