@@ -2,6 +2,7 @@
 
 __all__ = [
     "is_keyword",
+    "get_docstring",
     "get_varnames",
     "has_args",
     "has_kwargs",
@@ -23,8 +24,8 @@ from .extensions import raiseif
 
 try:
     import click
-except ImportError as click:
-    click = click
+except ImportError as _err:
+    click = _err
 
 KEYWORD = re.compile("[A-Za-z_][A-Za-z0-9_]*")
 
@@ -34,6 +35,19 @@ def is_keyword(key):
     if isinstance(key, str):
         return KEYWORD.fullmatch(key)
     return False
+
+
+def get_docstring(func):
+    "Returns the docstring of a function or a class"
+    doc = getattr(func, "__doc__", "") or ""
+    # Getting recursively the doc of all parents classes
+    for cls in set(getattr(func, "__mro__", ())):
+        if cls in (func, object):
+            continue
+        tmp = getattr(cls, "__doc__", "")
+        if tmp:
+            doc += f"\n\n# Documentation of {cls.__name__}\n{tmp}"
+    return doc
 
 
 def get_varnames(func):
@@ -246,18 +260,11 @@ def clickit(func):
             return args[0]
         return tpe
 
-    if func.__doc__:
-        doc = func.__doc__.split("\n")
-        # comments are all lines starting with "#"
-        comments = tuple(
-            line.strip(" #") for line in doc if line.lstrip().startswith("#")
-        )
-        doc = "\n".join(
-            tuple(line for line in doc if not line.lstrip().startswith("#"))
-        )
-        func.__doc__ = doc
-    else:
-        comments = ()
+    doc = get_docstring(func).split("\n")
+    # comments are all lines starting with "#"
+    comments = tuple(line.strip(" #") for line in doc if line.lstrip().startswith("#"))
+    doc = "\n".join(tuple(line for line in doc if not line.lstrip().startswith("#")))
+    func.__doc__ = doc.strip()
 
     def get_help(var):
         "Checking in __doc__ for lines that start with {var}:"
@@ -278,3 +285,8 @@ def clickit(func):
         )(func)
 
     return func
+
+
+def foo(*_, **__):
+    "A function that does nothing"
+    return
