@@ -10,4 +10,9 @@ setup(
         "clickit": ["click"],
         "test": ["pytest", "pytest-cov", "ipython", "numpy", "lyncs_setuptools"],
     },
+    entry_points={
+        "pytest11": [
+            "lyncs_utils = lyncs_utils.pytest",
+        ],
+    },
 )

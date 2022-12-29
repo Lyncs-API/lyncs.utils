@@ -86,11 +86,11 @@ def dictzip(*dicts, fill=True, default=None, values_only=False):
         all_keys = set.intersection(*map(set, map(keys, dicts)))
 
     for key in all_keys:
-        values = tuple(map(lambda _: _.get(key, default), dicts))
+        vals = tuple(map(lambda _: _.get(key, default), dicts))
         if values_only:
-            yield values
+            yield vals
         else:
-            yield key, values
+            yield key, vals
 
 
 def flat_dict(dct, sep=None, base=()):
@@ -145,7 +145,7 @@ def allclose(left, right, **kwargs):
     return all((allclose(*pair, **kwargs) for pair in pairs))
 
 
-def compact_indexes(indexes):
+def compact_indexes(ids):
     """
     Returns a list of ranges or integers
     as they occur sequentially in the list
@@ -156,12 +156,12 @@ def compact_indexes(indexes):
     [1, range(2, 7, 2), 7, range(8, 13, 2), 13]
     """
 
-    if not isiterable(indexes, int):
+    if not isiterable(ids, int):
         raise TypeError("compact_indexes requires a list of integers")
 
     tmp = []
     step = 0
-    for idx in indexes:
+    for idx in ids:
         if len(tmp) < 2:
             tmp.append(idx)
         else:
