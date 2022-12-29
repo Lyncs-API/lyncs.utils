@@ -54,13 +54,19 @@ def normalize_call(callspec, test):
             vals = val(test)
             newcalls = []
             for val in vals:
-                newcallspec = copy(callspec)
-                newcallspec.params = copy(callspec.params)
+                newcallspec = copy_callspec(callspec)
                 newcallspec.params[key] = val
                 calls = normalize_call(newcallspec, test)
                 newcalls.extend(calls)
             return newcalls
     return [callspec]
+
+
+def copy_callspec(callspec):
+    "Creating a copy of callspec"
+    new = copy(callspec)
+    object.__setattr__(new, "params", copy(callspec.params))
+    return new
 
 
 def is_dyn_param(val):
