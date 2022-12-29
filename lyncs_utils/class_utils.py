@@ -19,7 +19,6 @@ __all__ = [
     "after_super",
 ]
 
-import sys
 from types import MethodType
 from copy import copy
 from functools import wraps
@@ -171,11 +170,11 @@ def add_kwargs_of(fnc):
             and key not in keys
         ]
 
-        args.extend(("%s=%s" % (key, val) for key, val in kwargs))
+        args.extend((f"{key}={val}" for key, val in kwargs))
         args.append("**" + var_kwargs)
 
         args = ", ".join(args)
-        fnc2.__dict__["__wrapped__"] = eval("lambda %s: None" % (args))
+        fnc2.__dict__["__wrapped__"] = eval(f"lambda {args}: None")
         fnc2.__doc__ = add_parameters_to_doc(
             fnc.__doc__, get_parameters_doc(fnc2.__doc__)
         )

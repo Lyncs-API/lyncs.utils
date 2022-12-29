@@ -249,19 +249,17 @@ class FreezableDict(dict):
 
     def __delitem__(self, key):
         if self.frozen:
-            raise RuntimeError(
-                "The dict has been frozen and %s cannot be deleted." % key
-            )
+            raise RuntimeError(f"The dict has been frozen and {key} cannot be deleted.")
         super().__delitem__(key)
 
     def __setitem__(self, key, val):
         if key in self:
             if not self.allows_changes:
                 raise RuntimeError(
-                    "The dict has been frozen and %s cannot be changed." % key
+                    f"The dict has been frozen and {key} cannot be changed."
                 )
         elif not self.allows_new:
-            raise RuntimeError("The dict has been frozen and %s cannot be added." % key)
+            raise RuntimeError(f"The dict has been frozen and {key} cannot be added.")
         if not self.allows_changes and isinstance(val, FreezableDict):
             val = val.freeze()
         super().__setitem__(key, val)
