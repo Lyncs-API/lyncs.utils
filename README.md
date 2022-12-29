@@ -140,3 +140,10 @@ Functions for iterable objects
 - `nest_dict(dict, sep=None)`: turns a flat dictionaries into a nested dict
 - `allclose(left, right, **)`: applies isclose recursively to iterable objects
 - `compact_indexes(ids)`: compats list of integers into ranges where possible
+
+### Pytest
+
+Functions tu use within `pytest`, to be impoted from `lyncs_utils.pytest`
+
+- `DynParam(fnc)`: Dynamic params based on the test function
+- `GetMark(map, def)`: Dynamic params based on the marks of the test function
