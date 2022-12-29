@@ -4,9 +4,9 @@ Include this module only within pytest
 
 __all__ = ("DynParam", "GetMark")
 
-import pytest
 from copy import copy
 from dataclasses import dataclass
+import pytest
 
 
 @dataclass
@@ -38,6 +38,7 @@ class GetMark(DynParam):
 
 @pytest.hookimpl(hookwrapper=True)
 def pytest_generate_tests(metafunc):
+    "Runs normalize_call for all calls"
     yield
     newcalls = []
     for callspec in metafunc._calls:
@@ -47,6 +48,7 @@ def pytest_generate_tests(metafunc):
 
 
 def normalize_call(callspec, test):
+    "Replaces DynParam with its output"
     for key, val in callspec.params.items():
         if is_dyn_param(val):
             vals = val(test)
@@ -62,4 +64,5 @@ def normalize_call(callspec, test):
 
 
 def is_dyn_param(val):
+    "Checks if is DynParam"
     return isinstance(val, DynParam)
