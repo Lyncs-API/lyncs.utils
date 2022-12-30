@@ -2,12 +2,12 @@ import pytest
 from lyncs_utils.pytest import GetMark, DynParam
 
 
-@pytest.fixture(params=[GetMark({"mark1": [11], "mark2": [12]}, [10])])
+@pytest.fixture(params=[GetMark({"mark1": [11], "mark2": [12]}, default="mark1")])
 def param1(request):
     return request.param
 
 
-@pytest.fixture(params=[GetMark({"mark1": [21]}, [20])])
+@pytest.fixture(params=[GetMark({"mark1": [21]}, default="mark1")])
 def param2(request):
     return request.param
 
@@ -18,8 +18,8 @@ def name(request):
 
 
 def test_default(param1, param2, name):
-    assert param1 == 10
-    assert param2 == 20
+    assert param1 == 11
+    assert param2 == 21
     assert name == "test_default"
 
 
