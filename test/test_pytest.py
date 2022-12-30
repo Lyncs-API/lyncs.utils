@@ -33,5 +33,5 @@ def test_mark1(param1, param2, name):
 @pytest.mark.mark2
 def test_mark2(param1, param2, name):
     assert param1 == 12
-    assert param2 == 20
+    assert param2 == 21
     assert name == "test_mark2"
