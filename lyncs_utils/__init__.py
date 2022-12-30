@@ -1,6 +1,6 @@
 "Collection of generic-purpose and stand-alone functions"
 
-__version__ = "0.4.3"
+__version__ = "0.4.4"
 
 from .math import *
 from .logical import *
