@@ -288,3 +288,35 @@ class FreezableDict(dict):
         val = self[key]
         del self[key]
         return val
+
+
+class ndict(dict):
+    "A numerical dictionary that supports add, mul, etc"
+
+    def __ufunc__(self, other, fnc):
+        out = ndict(self)
+        if isinstance(other, Mapping):
+            for key, val in other.items():
+                out[key] = fnc(out[key], val)
+        else:
+            for key, val in self.items():
+                out[key] = fnc(val, other)
+        return out
+
+    def __add__(self, other):
+        return self.__ufunc__(other, operator.add)
+
+    def __sub__(self, other):
+        return self.__ufunc__(other, operator.sub)
+
+    def __mul__(self, other):
+        return self.__ufunc__(other, operator.mul)
+
+    def __rmul__(self, other):
+        return self.__ufunc__(other, operator.mul)
+
+    def __truediv__(self, other):
+        return self.__ufunc__(other, operator.truediv)
+
+    def __pow__(self, other):
+        return self.__ufunc__(other, operator.pow)
