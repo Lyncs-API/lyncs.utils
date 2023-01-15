@@ -183,3 +183,14 @@ def test_freezable_dict():
     assert did["foo_copy"].frozen
     did["foo12"] = foo12
     assert did["foo12"] is foo12
+
+
+def test_ndict():
+    dct = ndict({"a": 1, "b": 0})
+    assert dct + 1 == {"a": 2, "b": 1}
+    assert dct - 2 == {"a": -1, "b": -2}
+    assert dct * 3 == {"a": 3, "b": 0}
+    assert 3 * dct == {"a": 3, "b": 0}
+    assert dct / 1 == {"a": 1, "b": 0}
+    assert dct**2 == {"a": 1, "b": 0}
+    assert dct + {"a": 3} == {"a": 4, "b": 0}

@@ -58,6 +58,7 @@ Extensions of Python standard functions. See `lyncs_utils.extensions`.
 - `commonsuffix(words)`: Finds common suffix in words
 - `@raiseif(fail, error)`: Decorator that raises `error` if `fail` is `True`
 - `RaiseOnUse(error)`: Class instance that raises `error` when used
+- `ndict`: A dictionally that supports numerical operations
 
 ### Math
 
