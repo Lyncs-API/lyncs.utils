@@ -14,6 +14,7 @@ __all__ = [
     "commonsuffix",
     "raiseif",
     "RaiseOnUse",
+    "ndict",
 ]
 
 import io
@@ -21,8 +22,10 @@ import os
 import sys
 import ctypes
 import tempfile
-import importlib
+import operator
+from importlib import util as importlib_util
 from collections import defaultdict
+from collections.abc import Mapping
 from functools import wraps
 from itertools import count as _count
 from contextlib import redirect_stdout as _redirect_stdout
@@ -51,11 +54,11 @@ def lazy_import(name):
     try:
         return sys.modules[name]
     except KeyError:
-        spec = importlib.util.find_spec(name)
+        spec = importlib_util.find_spec(name)
         if spec is None:
             raise ImportError(f"Module not found: {name}")
-        sys.modules[name] = importlib.util.module_from_spec(spec)
-        loader = importlib.util.LazyLoader(spec.loader)
+        sys.modules[name] = importlib_util.module_from_spec(spec)
+        loader = importlib_util.LazyLoader(spec.loader)
         # Make module with proper locking and get it inserted into sys.modules.
         loader.exec_module(sys.modules[name])
         return sys.modules[name]
@@ -287,3 +290,35 @@ class FreezableDict(dict):
         val = self[key]
         del self[key]
         return val
+
+
+class ndict(dict):
+    "A numerical dictionary that supports add, mul, etc"
+
+    def __ufunc__(self, other, fnc):
+        out = ndict(self)
+        if isinstance(other, Mapping):
+            for key, val in other.items():
+                out[key] = fnc(out[key], val)
+        else:
+            for key, val in self.items():
+                out[key] = fnc(val, other)
+        return out
+
+    def __add__(self, other):
+        return self.__ufunc__(other, operator.add)
+
+    def __sub__(self, other):
+        return self.__ufunc__(other, operator.sub)
+
+    def __mul__(self, other):
+        return self.__ufunc__(other, operator.mul)
+
+    def __rmul__(self, other):
+        return self.__ufunc__(other, operator.mul)
+
+    def __truediv__(self, other):
+        return self.__ufunc__(other, operator.truediv)
+
+    def __pow__(self, other):
+        return self.__ufunc__(other, operator.pow)
