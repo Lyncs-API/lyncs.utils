@@ -14,6 +14,7 @@ __all__ = [
     "commonsuffix",
     "raiseif",
     "RaiseOnUse",
+    "ndict",
 ]
 
 import io
@@ -21,7 +22,7 @@ import os
 import sys
 import ctypes
 import tempfile
-import importlib
+from importlib import util as importlib_util
 from collections import defaultdict
 from functools import wraps
 from itertools import count as _count
@@ -51,11 +52,11 @@ def lazy_import(name):
     try:
         return sys.modules[name]
     except KeyError:
-        spec = importlib.util.find_spec(name)
+        spec = importlib_util.find_spec(name)
         if spec is None:
             raise ImportError(f"Module not found: {name}")
-        sys.modules[name] = importlib.util.module_from_spec(spec)
-        loader = importlib.util.LazyLoader(spec.loader)
+        sys.modules[name] = importlib_util.module_from_spec(spec)
+        loader = importlib_util.LazyLoader(spec.loader)
         # Make module with proper locking and get it inserted into sys.modules.
         loader.exec_module(sys.modules[name])
         return sys.modules[name]
