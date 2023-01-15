@@ -24,7 +24,8 @@ import ctypes
 import tempfile
 import operator
 from importlib import util as importlib_util
-from collections import defaultdict, Mapping
+from collections import defaultdict
+from collections.abc import Mapping
 from functools import wraps
 from itertools import count as _count
 from contextlib import redirect_stdout as _redirect_stdout
