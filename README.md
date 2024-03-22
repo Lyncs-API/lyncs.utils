@@ -148,3 +148,4 @@ Functions tu use within `pytest`, to be impoted from `lyncs_utils.pytest`
 
 - `DynParam(fnc)`: Dynamic params based on the test function
 - `GetMark(map, def)`: Dynamic params based on the marks of the test function
+- `lazy_fixture(str)`: Use a fixture as one of the values passed in @pytest.mark.parametrize
