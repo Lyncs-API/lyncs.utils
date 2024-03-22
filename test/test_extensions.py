@@ -192,5 +192,5 @@ def test_ndict():
     assert dct * 3 == {"a": 3, "b": 0}
     assert 3 * dct == {"a": 3, "b": 0}
     assert dct / 1 == {"a": 1, "b": 0}
-    assert dct ** 2 == {"a": 1, "b": 0}
+    assert dct**2 == {"a": 1, "b": 0}
     assert dct + {"a": 3} == {"a": 4, "b": 0}
