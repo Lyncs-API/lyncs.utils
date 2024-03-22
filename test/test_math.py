@@ -10,7 +10,7 @@ def test_iscomplex():
 def test_isclose():
     assert isclose(1, 1.0001, abs_tol=0.0001)
     assert not isclose(1, 1.0002, abs_tol=0.0001)
-    with warns(None):
+    with warns():
         assert isclose(1, 1.01, warn_tol=0.1)
     assert isclose(1j, 1.0001j, abs_tol=0.0001)
     assert isclose(1j, 1.0001j, rel_tol=0.0001)

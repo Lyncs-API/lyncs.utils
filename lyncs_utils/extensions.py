@@ -1,6 +1,7 @@
 """
 Extensions of Python standard functions
 """
+
 # pylint: disable=invalid-name
 
 __all__ = [
