@@ -42,6 +42,11 @@ def one():
     return 1
 
 
-@pytest.mark.parametrize("arg1,arg2", [("val1", lazy_fixture("one")),])
+@pytest.mark.parametrize(
+    "arg1,arg2",
+    [
+        ("val1", lazy_fixture("one")),
+    ],
+)
 def test_func(arg1, arg2):
     assert arg2 == 1
