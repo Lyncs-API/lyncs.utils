@@ -111,7 +111,7 @@ def is_lazy_fixture(value: object) -> bool:
 
 def pytest_make_parametrize_id(
     config: pytest.Config, val: object, argname: str,
-) -> str | None:
+) -> (str, None):
     """Inject lazy fixture parametrized id.
 
     Reference:
@@ -136,7 +136,7 @@ def pytest_make_parametrize_id(
 @pytest.hookimpl(tryfirst=True)
 def pytest_fixture_setup(
     fixturedef: pytest.FixtureDef, request: pytest.FixtureRequest,
-) -> object | None:
+) -> (object, None):
     """Lazy fixture setup hook.
 
     This hook will never take over a fixture setup but just simply will
@@ -173,7 +173,7 @@ def _resolve_lazy_fixture(__val: object, request: pytest.FixtureRequest) -> obje
     Credit:
     - https://github.com/TvoroG/pytest-lazy-fixture/issues/65#issuecomment-1914581161
     """
-    if isinstance(__val, list | tuple):
+    if isinstance(__val, (list, tuple)):
         return tuple(_resolve_lazy_fixture(v, request) for v in __val)
     if isinstance(__val, typing.Mapping):
         return {k: _resolve_lazy_fixture(v, request) for k, v in __val.items()}
