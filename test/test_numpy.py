@@ -52,7 +52,7 @@ def test_gammas_euclidean():
 @skip
 def test_su_generators():
     for ncol in range(1, 10):
-        assert len(list(su_generators(ncol))) == (ncol**2 - 1)
+        assert len(list(su_generators(ncol))) == (ncol ** 2 - 1)
         for gen in su_generators(ncol):
             assert (gen == -gen.transpose().conj()).all()
             assert allclose(gen.trace(), 0, abs_tol=ncol * 1e-16)

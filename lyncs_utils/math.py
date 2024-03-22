@@ -76,7 +76,7 @@ def prime_factors(num):
     "Returns the list of prime factors of n"
     itr = iter(PRIMES)
     cur = next(itr)
-    stop = int(num**0.5) + 1
+    stop = int(num ** 0.5) + 1
     while num > 1 and cur < stop:
         while num % cur == 0:
             yield cur
