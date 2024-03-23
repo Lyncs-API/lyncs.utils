@@ -10,11 +10,14 @@ import typing
 import pytest
 
 
+def is_dyn_param(val):
+    "Checks if is DynParam"
+    return isinstance(val, DynParam)
+
+
 @dataclass
 class DynParam:
-    """
-    An object that allows to generate test parameters dynamically.
-    """
+    """An object that allows to generate test parameters dynamically."""
 
     arg: None
     ids: callable = lambda val: str(val)
@@ -25,9 +28,7 @@ class DynParam:
 
 @dataclass
 class GetMark(DynParam):
-    """
-    Takes a dictionary as input and returns the value corresponding to the first matching mark.
-    """
+    """Takes a dictionary as input and returns the value corresponding to the first matching mark."""
 
     default: str = None
 
@@ -43,31 +44,100 @@ class GetMark(DynParam):
         return tuple(out)
 
 
+def normalize_dyn_param(callspec, metafunc, used_keys, idx, key, val):
+    """Replaces DynParam with its output"""
+    ids = val.ids
+    test = metafunc.function
+    vals = val(test)
+    newcalls = []
+    for val in vals:
+        newcallspec = copy_callspec(callspec)
+        newcallspec.params[key] = val
+        newcallspec._idlist[idx] = ids(val)
+        calls = normalize_call(newcallspec, metafunc)
+        newcalls.extend(calls)
+    return newcalls
+
+
+@dataclass
+class LazyFixture:
+    """Lazy fixture dataclass."""
+
+    name: str
+
+
+def lazy_fixture(name: str) -> LazyFixture:
+    """Mark a fixture as lazy."""
+    return LazyFixture(name)
+
+
+def is_lazy_fixture(value: object) -> bool:
+    """Check whether a value is a lazy fixture."""
+    return isinstance(value, LazyFixture)
+
+
+def normalize_lazy_fixture(callspec, metafunc, used_keys, idx, key, val):
+    "Replaces lazy with its output"
+    fm = metafunc.config.pluginmanager.get_plugin("funcmanage")
+    try:
+        if pytest.version_tuple >= (8, 0, 0):
+            fixturenames_closure, arg2fixturedefs = fm.getfixtureclosure(
+                metafunc.definition.parent, [val.name], {}
+            )
+        else:
+            _, fixturenames_closure, arg2fixturedefs = fm.getfixtureclosure(
+                [val.name], metafunc.definition.parent
+            )
+    except ValueError:
+        # 3.6.0 <= pytest < 3.7.0; `FixtureManager.getfixtureclosure` returns 2 values
+        fixturenames_closure, arg2fixturedefs = fm.getfixtureclosure(
+            [val.name], metafunc.definition.parent
+        )
+    except AttributeError:
+        # pytest < 3.6.0; `Metafunc` has no `definition` attribute
+        fixturenames_closure, arg2fixturedefs = fm.getfixtureclosure(
+            [val.name], current_node
+        )
+
+    extra_fixturenames = [
+        fname for fname in fixturenames_closure if fname not in callspec.params
+    ]  # and fname not in callspec.funcargs]
+
+    newmetafunc = copy_metafunc(metafunc)
+    newmetafunc.fixturenames = extra_fixturenames
+    newmetafunc._arg2fixturedefs.update(arg2fixturedefs)
+    newmetafunc._calls = [callspec]
+    fm.pytest_generate_tests(newmetafunc)
+    normalize_metafunc_calls(newmetafunc, used_keys)
+    return newmetafunc._calls
+
+
 @pytest.hookimpl(hookwrapper=True)
 def pytest_generate_tests(metafunc):
     "Runs normalize_call for all calls"
     yield
+    normalize_metafunc_calls(metafunc)
+
+
+def normalize_metafunc_calls(metafunc, used_keys=None):
     newcalls = []
     for callspec in metafunc._calls:
-        calls = normalize_call(callspec, metafunc.function)
+        calls = normalize_call(callspec, metafunc, used_keys)
         newcalls.extend(calls)
     metafunc._calls = newcalls
 
 
-def normalize_call(callspec, test):
+def normalize_call(callspec, metafunc, used_keys=None):
     "Replaces DynParam with its output"
+    used_keys = used_keys or set()
     for idx, (key, val) in enumerate(callspec.params.items()):
+        if key in used_keys:
+            continue
+        used_keys.add(key)
         if is_dyn_param(val):
-            ids = val.ids
-            vals = val(test)
-            newcalls = []
-            for val in vals:
-                newcallspec = copy_callspec(callspec)
-                newcallspec.params[key] = val
-                newcallspec._idlist[idx] = ids(val)
-                calls = normalize_call(newcallspec, test)
-                newcalls.extend(calls)
-            return newcalls
+            return normalize_dyn_param(callspec, metafunc, used_keys, idx, key, val)
+        if is_lazy_fixture(val):
+            return normalize_lazy_fixture(callspec, metafunc, used_keys, idx, key, val)
     return [callspec]
 
 
@@ -79,60 +149,19 @@ def copy_callspec(callspec):
     return new
 
 
-def is_dyn_param(val):
-    "Checks if is DynParam"
-    return isinstance(val, DynParam)
+def copy_metafunc(metafunc):
+    copied = copy(metafunc)
+    copied.fixturenames = copy(metafunc.fixturenames)
+    copied._calls = []
 
+    try:
+        copied._ids = copy(metafunc._ids)
+    except AttributeError:
+        # pytest>=5.3.0
+        pass
 
-@dataclass
-class LazyFixture:
-    """Lazy fixture dataclass."""
-
-    name: str
-
-
-def lazy_fixture(name: str) -> LazyFixture:
-    """Mark a fixture as lazy.
-
-    Credit:
-    - https://github.com/TvoroG/pytest-lazy-fixture/issues/65#issuecomment-1914581161
-    """
-    return LazyFixture(name)
-
-
-def is_lazy_fixture(value: object) -> bool:
-    """Check whether a value is a lazy fixture.
-
-    Credit:
-    - https://github.com/TvoroG/pytest-lazy-fixture/issues/65#issuecomment-1914581161
-    """
-    return isinstance(value, LazyFixture)
-
-
-def pytest_make_parametrize_id(
-    config: pytest.Config,
-    val: object,
-    argname: str,
-) -> (str, None):
-    """Inject lazy fixture parametrized id.
-
-    Reference:
-    - https://bit.ly/48Off6r
-
-    Args:
-        config (pytest.Config): pytest configuration.
-        value (object): fixture value.
-        argname (str): automatic parameter name.
-
-    Returns:
-        str: new parameter id.
-
-    Credit:
-    - https://github.com/TvoroG/pytest-lazy-fixture/issues/65#issuecomment-1914581161
-    """
-    if is_lazy_fixture(val):
-        return typing.cast(LazyFixture, val).name
-    return None
+    copied._arg2fixturedefs = copy(metafunc._arg2fixturedefs)
+    return copied
 
 
 @pytest.hookimpl(tryfirst=True)
