@@ -77,7 +77,7 @@ def is_lazy_fixture(value: object) -> bool:
 
 
 def normalize_lazy_fixture(callspec, metafunc, used_keys, idx, key, val):
-    "Replaces lazy with its output"
+    "Replaces LazyFixture with its output"
     fm = metafunc.config.pluginmanager.get_plugin("funcmanage")
     try:
         if pytest.version_tuple >= (8, 0, 0):
@@ -112,14 +112,23 @@ def normalize_lazy_fixture(callspec, metafunc, used_keys, idx, key, val):
     return newmetafunc._calls
 
 
+@pytest.hookimpl(tryfirst=True)
+def pytest_fixture_setup(fixturedef, request):
+    """Replaces LazyFixture with its name"""
+    val = getattr(request, "param", None)
+    if is_lazy_fixture(val):
+        request.param = request.getfixturevalue(val.name)
+
+
 @pytest.hookimpl(hookwrapper=True)
 def pytest_generate_tests(metafunc):
-    "Runs normalize_call for all calls"
+    """Runs normalize_call for all calls"""
     yield
     normalize_metafunc_calls(metafunc)
 
 
 def normalize_metafunc_calls(metafunc, used_keys=None):
+    """Runs normalize_call for all calls"""
     newcalls = []
     for callspec in metafunc._calls:
         calls = normalize_call(callspec, metafunc, used_keys)
@@ -128,7 +137,7 @@ def normalize_metafunc_calls(metafunc, used_keys=None):
 
 
 def normalize_call(callspec, metafunc, used_keys=None):
-    "Replaces DynParam with its output"
+    "Replaces special fixtures with their output"
     used_keys = used_keys or set()
     for idx, (key, val) in enumerate(callspec.params.items()):
         if key in used_keys:
@@ -142,7 +151,7 @@ def normalize_call(callspec, metafunc, used_keys=None):
 
 
 def copy_callspec(callspec):
-    "Creating a copy of callspec"
+    """Creates a copy of callspec"""
     new = copy(callspec)
     object.__setattr__(new, "params", copy(callspec.params))
     object.__setattr__(new, "_idlist", copy(callspec._idlist))
@@ -150,6 +159,7 @@ def copy_callspec(callspec):
 
 
 def copy_metafunc(metafunc):
+    """Creates a copy of metafunc"""
     copied = copy(metafunc)
     copied.fixturenames = copy(metafunc.fixturenames)
     copied._calls = []
@@ -162,54 +172,3 @@ def copy_metafunc(metafunc):
 
     copied._arg2fixturedefs = copy(metafunc._arg2fixturedefs)
     return copied
-
-
-@pytest.hookimpl(tryfirst=True)
-def pytest_fixture_setup(
-    fixturedef: pytest.FixtureDef,
-    request: pytest.FixtureRequest,
-) -> (object, None):
-    """Lazy fixture setup hook.
-
-    This hook will never take over a fixture setup but just simply will
-    try to resolve recursively any lazy fixture found in request.param.
-
-    Reference:
-    - https://bit.ly/3SyvsXJ
-
-    Args:
-        fixturedef (pytest.FixtureDef): fixture definition object.
-        request (pytest.FixtureRequest): fixture request object.
-
-    Returns:
-        object | None: fixture value or None otherwise.
-
-    Credit:
-    - https://github.com/TvoroG/pytest-lazy-fixture/issues/65#issuecomment-1914581161
-    """
-    if hasattr(request, "param") and request.param:
-        request.param = _resolve_lazy_fixture(request.param, request)
-    return None
-
-
-def _resolve_lazy_fixture(__val: object, request: pytest.FixtureRequest) -> object:
-    """Lazy fixture resolver.
-
-    Args:
-        __val (object): fixture value object.
-        request (pytest.FixtureRequest): pytest fixture request object.
-
-    Returns:
-        object: resolved fixture value.
-
-    Credit:
-    - https://github.com/TvoroG/pytest-lazy-fixture/issues/65#issuecomment-1914581161
-    """
-    if isinstance(__val, (list, tuple)):
-        return tuple(_resolve_lazy_fixture(v, request) for v in __val)
-    if isinstance(__val, typing.Mapping):
-        return {k: _resolve_lazy_fixture(v, request) for k, v in __val.items()}
-    if not is_lazy_fixture(__val):
-        return __val
-    lazy_obj = typing.cast(LazyFixture, __val)
-    return request.getfixturevalue(lazy_obj.name)
